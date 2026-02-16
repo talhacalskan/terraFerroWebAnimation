@@ -1,0 +1,682 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>TerraFerroTech | Agri-Silicon Convergence</title>
+    <!-- Fonts -->
+    <link
+      href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;500;700&family=Inter:wght@300;400;600&display=swap"
+      rel="stylesheet"
+    />
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- GSAP for Animations -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/ScrollTrigger.min.js"></script>
+    <!-- Three.js for 3D -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+    <style>
+      :root {
+        --obsidian: #080808;
+        --accent: #00ff87; /* Agri Green */
+        --it-cyan: #00f5ff;
+        --rd-purple: #b026ff;
+        --text-main: #ffffff;
+        --glass: rgba(255, 255, 255, 0.02);
+        --glass-border: rgba(255, 255, 255, 0.08);
+      }
+
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+        cursor: none;
+      }
+
+      body {
+        background-color: var(--obsidian);
+        color: var(--text-main);
+        font-family: "Inter", sans-serif;
+        overflow-x: hidden;
+        scroll-behavior: smooth;
+      }
+
+      h1,
+      h2,
+      h3 {
+        font-family: "Space Grotesk", sans-serif;
+        font-weight: 700;
+      }
+
+      /* Custom Cursor */
+      #custom-cursor {
+        position: fixed;
+        width: 10px;
+        height: 10px;
+        background: var(--accent);
+        border-radius: 50%;
+        pointer-events: none;
+        z-index: 10000;
+        transition: transform 0.1s ease-out;
+        mix-blend-mode: difference;
+      }
+
+      #cursor-follower {
+        position: fixed;
+        width: 35px;
+        height: 35px;
+        border: 1px solid var(--accent);
+        border-radius: 50%;
+        pointer-events: none;
+        z-index: 9999;
+        transition:
+          transform 0.2s ease-out,
+          border-color 0.3s ease;
+      }
+
+      /* Glassmorphism */
+      .glass-panel {
+        background: var(--glass);
+        backdrop-filter: blur(15px);
+        -webkit-backdrop-filter: blur(15px);
+        border: 1px solid var(--glass-border);
+        border-radius: 20px;
+        transition:
+          border-color 0.3s ease,
+          background 0.3s ease;
+      }
+
+      .glass-panel:hover {
+        border-color: rgba(255, 255, 255, 0.2);
+        background: rgba(255, 255, 255, 0.05);
+      }
+
+      /* Language Switcher UI */
+      .lang-btn {
+        opacity: 0.4;
+        transition:
+          opacity 0.3s,
+          color 0.3s;
+      }
+      .lang-btn.active {
+        opacity: 1;
+        color: var(--accent);
+        font-weight: bold;
+      }
+
+      /* 3D Container */
+      #canvas-container {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100vh;
+        z-index: 0;
+      }
+
+      /* Scroll Progress Line */
+      #scroll-path {
+        position: fixed;
+        top: 0;
+        left: 5%;
+        width: 2px;
+        height: 100%;
+        background: rgba(255, 255, 255, 0.05);
+        z-index: 5;
+      }
+      #scroll-bar {
+        width: 100%;
+        height: 0%;
+        background: var(--accent);
+        box-shadow: 0 0 15px var(--accent);
+      }
+
+      /* Sections */
+      section {
+        min-height: 100vh;
+        position: relative;
+        padding: 100px 8%;
+        display: flex;
+        align-items: center;
+      }
+
+      /* Magnetic Button */
+      .magnetic-btn {
+        display: inline-flex;
+        align-items: center;
+        padding: 16px 36px;
+        background: var(--accent);
+        color: var(--obsidian);
+        border-radius: 4px;
+        font-weight: 800;
+        text-transform: uppercase;
+        letter-spacing: 2px;
+        transition: box-shadow 0.3s;
+        position: relative;
+      }
+      .magnetic-btn:hover {
+        box-shadow: 0 0 30px var(--accent);
+      }
+
+      /* Bento Grid */
+      .bento-grid {
+        display: grid;
+        grid-template-columns: repeat(4, 1fr);
+        grid-template-rows: auto;
+        gap: 20px;
+        width: 100%;
+      }
+
+      .scramble-text {
+        visibility: hidden;
+      }
+
+      ::-webkit-scrollbar {
+        width: 0px;
+      }
+
+      @media (max-width: 1024px) {
+        .bento-grid {
+          grid-template-columns: repeat(2, 1fr);
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <div id="custom-cursor"></div>
+    <div id="cursor-follower"></div>
+
+    <nav
+      class="fixed top-0 left-0 w-full p-8 z-50 flex justify-between items-center"
+    >
+      <div class="text-2xl font-bold tracking-tighter flex items-center gap-2">
+        <span class="text-[var(--accent)]">TERRA</span>FERRO<span
+          class="opacity-40"
+          >.</span
+        >
+      </div>
+
+      <div class="flex gap-4 text-xs font-mono">
+        <button
+          onclick="setLanguage('en')"
+          id="lang-en"
+          class="lang-btn active"
+        >
+          EN
+        </button>
+        <button onclick="setLanguage('sq')" id="lang-sq" class="lang-btn">
+          SQ
+        </button>
+        <button onclick="setLanguage('tr')" id="lang-tr" class="lang-btn">
+          TR
+        </button>
+      </div>
+
+      <div
+        class="hidden md:flex gap-8 font-medium tracking-widest text-[10px] uppercase"
+      >
+        <a
+          href="#hero"
+          class="hover:text-[var(--accent)] transition-colors"
+          data-t="nav-home"
+          >Biosphere</a
+        >
+        <a
+          href="#agri"
+          class="hover:text-[var(--accent)] transition-colors"
+          data-t="nav-agri"
+          >AgriTech</a
+        >
+        <a
+          href="#it"
+          class="hover:text-[var(--it-cyan)] transition-colors"
+          data-t="nav-it"
+          >Silicon Field</a
+        >
+      </div>
+    </nav>
+
+    <div id="scroll-path">
+      <div id="scroll-bar"></div>
+    </div>
+
+    <div id="canvas-container"></div>
+
+    <main class="relative z-10">
+      <!-- Hero Section -->
+      <section id="hero">
+        <div class="max-w-4xl">
+          <span
+            class="text-[var(--accent)] font-mono tracking-widest mb-4 block"
+            data-t="hero-sub"
+            >EST. 2025 // HYBRID SYSTEMS</span
+          >
+          <h1
+            class="text-6xl md:text-9xl mb-8 scramble-text"
+            data-text="TERRA FERRO"
+            data-t="hero-title"
+          >
+            TERRA FERRO
+          </h1>
+          <p
+            class="text-xl md:text-2xl text-white/50 mb-12 max-w-2xl leading-relaxed"
+            data-t="hero-desc"
+          >
+            Synthesizing fertile earth with intelligent silicon. We are
+            engineering the future of sustainable autonomy.
+          </p>
+          <div class="flex gap-6">
+            <a href="#agri" class="magnetic-btn" data-t="hero-btn"
+              >Initialize</a
+            >
+          </div>
+        </div>
+      </section>
+
+      <!-- AgriTech Section -->
+      <section id="agri">
+        <div class="w-full">
+          <div class="mb-16">
+            <h2
+              class="text-5xl md:text-8xl mb-4 scramble-text"
+              data-text="AGRI-GENESIS"
+              data-t="agri-title"
+            >
+              AGRI-GENESIS
+            </h2>
+            <p class="text-[var(--accent)] font-mono" data-t="agri-sub">
+              SYSTEMS FOR THE FERTILE GRID
+            </p>
+          </div>
+
+          <div class="bento-grid">
+            <div
+              class="bento-item glass-panel col-span-2 p-10 flex flex-col justify-between min-h-[300px]"
+            >
+              <h3 class="text-3xl" data-t="agri-card1-t">Precision Yield</h3>
+              <p class="opacity-40" data-t="agri-card1-d">
+                AI-driven soil analysis maximizing output with minimal resource
+                footprint.
+              </p>
+              <div class="mt-8 flex gap-2">
+                <div class="h-1 w-20 bg-[var(--accent)]"></div>
+                <div class="h-1 w-10 bg-white/10"></div>
+              </div>
+            </div>
+            <div
+              class="bento-item glass-panel p-10 flex flex-col items-center justify-center text-center"
+            >
+              <div class="text-5xl font-bold text-[var(--accent)]">94%</div>
+              <p
+                class="text-[10px] mt-2 opacity-30 tracking-widest uppercase"
+                data-t="agri-stat"
+              >
+                Water Efficiency
+              </p>
+            </div>
+            <div class="bento-item glass-panel p-10">
+              <h3 class="text-xl mb-4" data-t="agri-card2-t">Eco-Mesh</h3>
+              <div class="space-y-2">
+                <div class="h-2 bg-white/5 rounded w-full"></div>
+                <div class="h-2 bg-white/5 rounded w-3/4"></div>
+              </div>
+            </div>
+            <div
+              class="bento-item glass-panel col-span-4 p-8 flex items-center justify-between"
+            >
+              <div data-t="agri-footer">
+                Real-time biometrics for large scale cultivation.
+              </div>
+              <div class="text-[var(--accent)]">>> ACTIVE_STREAM</div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- IT Infrastructure Section -->
+      <section id="it">
+        <div class="w-full">
+          <div class="mb-16 text-right">
+            <h2
+              class="text-5xl md:text-8xl mb-4 scramble-text"
+              data-text="SILICON FIELD"
+              data-t="it-title"
+            >
+              SILICON FIELD
+            </h2>
+            <p class="text-[var(--it-cyan)] font-mono" data-t="it-sub">
+              0x01 // DATA ARCHITECTURE
+            </p>
+          </div>
+
+          <div class="bento-grid">
+            <div
+              class="bento-item glass-panel col-span-1 p-10 border-t-2 border-[var(--it-cyan)]"
+            >
+              <h3 class="text-xl mb-6" data-t="it-card1-t">Edge Nodes</h3>
+              <div
+                class="bg-black/40 p-4 font-mono text-[10px] text-[var(--it-cyan)] opacity-60"
+              >
+                RUN :: AGRI_PULSE<br />
+                STATUS :: SECURE<br />
+                UPLINK :: 10.0.4.1
+              </div>
+            </div>
+            <div
+              class="bento-item glass-panel col-span-3 p-10 flex flex-col justify-end min-h-[400px]"
+            >
+              <div class="mb-auto text-8xl font-black opacity-5">TECH</div>
+              <h3 class="text-4xl mb-4" data-t="it-card2-t">The Neural Soil</h3>
+              <p class="text-white/40 max-w-xl" data-t="it-card2-d">
+                Our IT department manages distributed server clusters designed
+                for rural deployment, bringing low-latency intelligence to the
+                edge of the wild.
+              </p>
+            </div>
+          </div>
+        </div>
+      </section>
+    </main>
+
+    <footer
+      class="p-20 text-center border-t border-white/5 relative z-20 bg-black/80 backdrop-blur-md"
+    >
+      <div class="text-2xl font-bold mb-4">
+        TERRAFERRO<span class="text-[var(--accent)]">TECH</span>.
+      </div>
+      <p class="opacity-30 text-[10px] tracking-widest uppercase">
+        Global Operations / 2025 Hybrid Future Systems
+      </p>
+    </footer>
+
+    <script>
+      // --- TRANSLATION DATA ---
+      const translations = {
+        en: {
+          "nav-home": "Biosphere",
+          "nav-agri": "AgriTech",
+          "nav-it": "Silicon Field",
+          "hero-sub": "EST. 2025 // HYBRID SYSTEMS",
+          "hero-title": "TERRA FERRO",
+          "hero-desc":
+            "Synthesizing fertile earth with intelligent silicon. We are engineering the future of sustainable autonomy.",
+          "hero-btn": "Initialize",
+          "agri-title": "AGRI-GENESIS",
+          "agri-sub": "SYSTEMS FOR THE FERTILE GRID",
+          "agri-card1-t": "Precision Yield",
+          "agri-card1-d":
+            "AI-driven soil analysis maximizing output with minimal resource footprint.",
+          "agri-stat": "Water Efficiency",
+          "agri-card2-t": "Eco-Mesh",
+          "agri-footer": "Real-time biometrics for large scale cultivation.",
+          "it-title": "SILICON FIELD",
+          "it-sub": "0x01 // DATA ARCHITECTURE",
+          "it-card1-t": "Edge Nodes",
+          "it-card2-t": "The Neural Soil",
+          "it-card2-d":
+            "Our IT department manages distributed server clusters designed for rural deployment, bringing low-latency intelligence to the edge of the wild.",
+        },
+        sq: {
+          "nav-home": "Biosfera",
+          "nav-agri": "AgriTech",
+          "nav-it": "Fusha e Silikonit",
+          "hero-sub": "EST. 2025 // SISTEMET HIBRIDE",
+          "hero-title": "TERRA FERRO",
+          "hero-desc":
+            "Sintezimi i tokës pjellore me silikon inteligjent. Ne po inxhinierojmë të ardhmen e autonomisë së qëndrueshme.",
+          "hero-btn": "Inicializo",
+          "agri-title": "AGRI-GENEZA",
+          "agri-sub": "SISTEMET PËR RRJETIN PJELLOR",
+          "agri-card1-t": "Rendimenti i Saktë",
+          "agri-card1-d":
+            "Analiza e tokës e drejtuar nga AI duke maksimizuar prodhimin me gjurmë minimale burimesh.",
+          "agri-stat": "Efikasiteti i Ujit",
+          "agri-card2-t": "Eko-Rrjeta",
+          "agri-footer":
+            "Biometria në kohë reale për kultivim në shkallë të gjerë.",
+          "it-title": "FUSHA E SILIKONIT",
+          "it-sub": "0x01 // ARKITEKTURA E TË DHËNAVE",
+          "it-card1-t": "Nyjet Skajore",
+          "it-card2-t": "Toka Neurale",
+          "it-card2-d":
+            "Departamenti ynë i TI menaxhon klastrat e shpërndara të serverëve të krijuar për vendosje rurale, duke sjellë inteligjencë me vonesë të ulët në skajet e natyrës.",
+        },
+        tr: {
+          "nav-home": "Biyosfer",
+          "nav-agri": "AgriTech",
+          "nav-it": "Silikon Sahası",
+          "hero-sub": "EST. 2025 // HİBRİT SİSTEMLER",
+          "hero-title": "TERRA FERRO",
+          "hero-desc":
+            "Bereketli toprakları akıllı silikonla sentezliyoruz. Sürdürülebilir özerkliğin geleceğini inşa ediyoruz.",
+          "hero-btn": "Başlat",
+          "agri-title": "AGRİ-GENESİS",
+          "agri-sub": "BEREKETLİ ŞEBEKE İÇİN SİSTEMLER",
+          "agri-card1-t": "Hassas Verim",
+          "agri-card1-d":
+            "Yapay zeka destekli toprak analizi ile minimum kaynakla maksimum verim.",
+          "agri-stat": "Su Tasarrufu",
+          "agri-card2-t": "Eko-Ağ",
+          "agri-footer": "Geniş ölçekli tarım için gerçek zamanlı biyometri.",
+          "it-title": "SİLİKON SAHASI",
+          "it-sub": "0x01 // VERİ MİMARİSİ",
+          "it-card1-t": "Uç Düğümler",
+          "it-card2-t": "Nöral Toprak",
+          "it-card2-d":
+            "Bilişim departmanımız, kırsal alanlar için tasarlanmış dağıtık sunucu kümelerini yöneterek vahşi doğanın sınırlarına düşük gecikmeli zeka getiriyor.",
+        },
+      };
+
+      function setLanguage(lang) {
+        document
+          .querySelectorAll(".lang-btn")
+          .forEach((btn) => btn.classList.remove("active"));
+        document.getElementById(`lang-${lang}`).classList.add("active");
+
+        document.querySelectorAll("[data-t]").forEach((el) => {
+          const key = el.getAttribute("data-t");
+          if (translations[lang][key]) {
+            if (el.classList.contains("scramble-text")) {
+              el.setAttribute("data-text", translations[lang][key]);
+              // Trigger re-scramble if needed
+            } else {
+              el.innerText = translations[lang][key];
+            }
+          }
+        });
+        // Re-trigger header animations for new text
+        refreshScrambles();
+      }
+
+      // --- TEXT SCRAMBLE ---
+      class TextScramble {
+        constructor(el) {
+          this.el = el;
+          this.chars = "!<>-_\\/[]{}—=+*^?#________";
+          this.update = this.update.bind(this);
+        }
+        setText(newText) {
+          const oldText = this.el.innerText;
+          const length = Math.max(oldText.length, newText.length);
+          const promise = new Promise((resolve) => (this.resolve = resolve));
+          this.queue = [];
+          for (let i = 0; i < length; i++) {
+            const from = oldText[i] || "";
+            const to = newText[i] || "";
+            const start = Math.floor(Math.random() * 40);
+            const end = start + Math.floor(Math.random() * 40);
+            this.queue.push({ from, to, start, end });
+          }
+          cancelAnimationFrame(this.frameRequest);
+          this.frame = 0;
+          this.update();
+          return promise;
+        }
+        update() {
+          let output = "";
+          let complete = 0;
+          for (let i = 0, n = this.queue.length; i < n; i++) {
+            let { from, to, start, end, char } = this.queue[i];
+            if (this.frame >= end) {
+              complete++;
+              output += to;
+            } else if (this.frame >= start) {
+              if (!char || Math.random() < 0.28) {
+                char =
+                  this.chars[Math.floor(Math.random() * this.chars.length)];
+                this.queue[i].char = char;
+              }
+              output += `<span class="opacity-50">${char}</span>`;
+            } else {
+              output += from;
+            }
+          }
+          this.el.innerHTML = output;
+          if (complete === this.queue.length) {
+            this.resolve();
+          } else {
+            this.frameRequest = requestAnimationFrame(this.update);
+            this.frame++;
+          }
+        }
+      }
+
+      function refreshScrambles() {
+        document.querySelectorAll(".scramble-text").forEach((h) => {
+          const fx = new TextScramble(h);
+          fx.setText(h.getAttribute("data-text"));
+        });
+      }
+
+      // --- THREE.JS SCENE ---
+      let scene, camera, renderer, crystal;
+      function initThree() {
+        scene = new THREE.Scene();
+        camera = new THREE.PerspectiveCamera(
+          75,
+          window.innerWidth / window.innerHeight,
+          0.1,
+          1000,
+        );
+        renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true });
+        renderer.setSize(window.innerWidth, window.innerHeight);
+        document
+          .getElementById("canvas-container")
+          .appendChild(renderer.domElement);
+
+        // Geo-Crystal (The Hybrid Core)
+        const geometry = new THREE.OctahedronGeometry(3, 0);
+        const material = new THREE.MeshPhongMaterial({
+          color: 0x00ff87,
+          wireframe: true,
+          transparent: true,
+          opacity: 0.2,
+        });
+        crystal = new THREE.Mesh(geometry, material);
+        scene.add(crystal);
+
+        const light = new THREE.PointLight(0x00ff87, 1, 100);
+        light.position.set(10, 10, 10);
+        scene.add(light);
+        scene.add(new THREE.AmbientLight(0x404040));
+
+        camera.position.z = 10;
+        animateThree();
+      }
+
+      function animateThree() {
+        requestAnimationFrame(animateThree);
+        crystal.rotation.y += 0.003;
+        crystal.rotation.x += 0.001;
+        renderer.render(scene, camera);
+      }
+
+      // --- GSAP & INTERACTION ---
+      window.addEventListener("DOMContentLoaded", () => {
+        initThree();
+        gsap.registerPlugin(ScrollTrigger);
+
+        // Cursor
+        const cursor = document.getElementById("custom-cursor");
+        const follower = document.getElementById("cursor-follower");
+        window.addEventListener("mousemove", (e) => {
+          gsap.to(cursor, { x: e.clientX, y: e.clientY, duration: 0 });
+          gsap.to(follower, {
+            x: e.clientX - 12,
+            y: e.clientY - 12,
+            duration: 0.15,
+          });
+        });
+
+        // Scramble Init
+        const headers = document.querySelectorAll(".scramble-text");
+        headers.forEach((h) => {
+          h.style.visibility = "visible";
+          const fx = new TextScramble(h);
+          ScrollTrigger.create({
+            trigger: h,
+            start: "top 95%",
+            onEnter: () => fx.setText(h.getAttribute("data-text")),
+          });
+        });
+
+        // Scroll Bar
+        gsap.to("#scroll-bar", {
+          height: "100%",
+          scrollTrigger: {
+            trigger: "body",
+            start: "top top",
+            end: "bottom bottom",
+            scrub: true,
+          },
+        });
+
+        // Camera Shift
+        gsap.to(camera.position, {
+          z: 15,
+          y: -5,
+          scrollTrigger: {
+            trigger: "main",
+            start: "top top",
+            end: "bottom bottom",
+            scrub: 1,
+          },
+        });
+
+        // Section Theme Swapping
+        ScrollTrigger.create({
+          trigger: "#it",
+          start: "top center",
+          onEnter: () => {
+            gsap.to(crystal.material.color, {
+              r: 0,
+              g: 0.96,
+              b: 1,
+              duration: 1,
+            }); // Cyan
+            document.documentElement.style.setProperty(
+              "--accent",
+              "var(--it-cyan)",
+            );
+          },
+          onLeaveBack: () => {
+            gsap.to(crystal.material.color, {
+              r: 0,
+              g: 1,
+              b: 0.52,
+              duration: 1,
+            }); // Green
+            document.documentElement.style.setProperty("--accent", "#00FF87");
+          },
+        });
+      });
+
+      window.addEventListener("resize", () => {
+        camera.aspect = window.innerWidth / window.innerHeight;
+        camera.updateProjectionMatrix();
+        renderer.setSize(window.innerWidth, window.innerHeight);
+      });
+    </script>
+  </body>
+</html>
