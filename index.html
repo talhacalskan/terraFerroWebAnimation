@@ -37,9 +37,9 @@
     <style>
       :root {
         --obsidian: #080808;
-        --accent: #00ff87; /* Agri Green */
+        --accent: #00ff87;
         --it-cyan: #00f5ff;
-        --warning: #ffb700; /* For 'Soon' status */
+        --warning: #ffb700;
         --text-main: #ffffff;
         --glass: rgba(255, 255, 255, 0.02);
         --glass-border: rgba(255, 255, 255, 0.08);
@@ -49,7 +49,18 @@
         margin: 0;
         padding: 0;
         box-sizing: border-box;
-        cursor: none;
+        cursor: none; /* Masaüstünde imleç yok */
+      }
+
+      /* Mobilde standart imleci geri getir, yoksa tıklamak zor olur */
+      @media (pointer: coarse) {
+        * {
+          cursor: auto !important;
+        }
+        #custom-cursor,
+        #cursor-follower {
+          display: none !important;
+        }
       }
 
       body {
@@ -131,7 +142,7 @@
         z-index: 0;
       }
 
-      /* Scroll Progress Line */
+      /* Scroll Progress Line - Mobilde gizle */
       #scroll-path {
         position: fixed;
         top: 0;
@@ -140,6 +151,7 @@
         height: 100%;
         background: rgba(255, 255, 255, 0.05);
         z-index: 5;
+        display: none; /* Varsayılan gizli */
       }
       #scroll-bar {
         width: 100%;
@@ -148,34 +160,54 @@
         box-shadow: 0 0 15px var(--accent);
       }
 
+      @media (min-width: 768px) {
+        #scroll-path {
+          display: block;
+        }
+      }
+
       /* Sections */
       section {
         min-height: 100vh;
         position: relative;
-        padding: 100px 8%;
+        padding: 80px 5%; /* Mobilde daha az padding */
         display: flex;
         align-items: center;
+      }
+
+      @media (min-width: 768px) {
+        section {
+          padding: 100px 8%;
+        }
       }
 
       /* Magnetic Button */
       .magnetic-btn {
         display: inline-flex;
         align-items: center;
-        padding: 16px 36px;
+        padding: 12px 24px; /* Mobilde daha küçük buton */
         background: var(--accent);
         color: var(--obsidian);
         border-radius: 4px;
         font-weight: 800;
         text-transform: uppercase;
-        letter-spacing: 2px;
+        letter-spacing: 1px;
         transition: box-shadow 0.3s;
         position: relative;
+        font-size: 0.9rem;
+      }
+      @media (min-width: 768px) {
+        .magnetic-btn {
+          padding: 16px 36px;
+          letter-spacing: 2px;
+          font-size: 1rem;
+        }
       }
       .magnetic-btn:hover {
         box-shadow: 0 0 30px var(--accent);
       }
 
-      /* === PRELOADER STYLES === */
+      /* Preloader */
       #preloader {
         position: fixed;
         top: 0;
@@ -191,13 +223,11 @@
           opacity 0.8s ease-in-out,
           visibility 0.8s ease-in-out;
       }
-
       #preloader.loaded {
         opacity: 0;
         visibility: hidden;
         pointer-events: none;
       }
-
       .loader-container {
         position: relative;
         display: flex;
@@ -205,7 +235,6 @@
         align-items: center;
         justify-content: center;
       }
-
       .loading-text {
         margin-top: 20px;
         font-family: "Space Grotesk", sans-serif;
@@ -217,7 +246,6 @@
         position: relative;
         z-index: 10;
       }
-
       .pulse-ring {
         position: absolute;
         top: 50%;
@@ -230,12 +258,10 @@
         opacity: 0;
         animation: pulseRipple 3s linear infinite;
       }
-
       .pulse-ring.delay {
         animation-delay: 1.5s;
       }
 
-      /* === ANİMASYONLAR === */
       @keyframes pulseRipple {
         0% {
           width: 80px;
@@ -250,7 +276,6 @@
           border-width: 1px;
         }
       }
-
       @keyframes textBlink {
         0%,
         100% {
@@ -261,13 +286,44 @@
         }
       }
 
-      /* Bento Grid */
+      /* Bento Grid - MOBIL DUZENLEMESI */
       .bento-grid {
         display: grid;
-        grid-template-columns: repeat(4, 1fr);
+        grid-template-columns: 1fr; /* Mobilde tek sütun */
         grid-template-rows: auto;
         gap: 20px;
         width: 100%;
+      }
+
+      @media (min-width: 768px) {
+        .bento-grid {
+          grid-template-columns: repeat(2, 1fr);
+        }
+      }
+      @media (min-width: 1024px) {
+        .bento-grid {
+          grid-template-columns: repeat(4, 1fr);
+        }
+      }
+
+      /* Grid Span Düzeltmeleri */
+      .col-span-2,
+      .col-span-4 {
+        grid-column: span 1; /* Mobilde hepsi tek sütun */
+      }
+
+      @media (min-width: 768px) {
+        .col-span-2 {
+          grid-column: span 2;
+        }
+        .col-span-4 {
+          grid-column: span 2;
+        }
+      }
+      @media (min-width: 1024px) {
+        .col-span-4 {
+          grid-column: span 4;
+        }
       }
 
       .scramble-text {
@@ -277,20 +333,25 @@
       /* TECH Typing Animation */
       .tech-subtitle {
         display: block;
-        font-size: 4rem;
+        font-size: 2.5rem; /* Mobilde küçültüldü */
         color: var(--accent);
         opacity: 0;
         animation: techSubtitleTyping 1.5s ease-out 2.5s forwards;
         letter-spacing: 0.2em;
         text-shadow:
           0 0 30px var(--accent),
-          0 0 60px var(--accent),
-          0 0 90px rgba(0, 255, 135, 0.5);
+          0 0 60px var(--accent);
         position: relative;
         font-family: "Space Grotesk", sans-serif;
         font-weight: 700;
-        margin-top: -1rem;
+        margin-top: -0.5rem;
         margin-bottom: 2rem;
+      }
+      @media (min-width: 768px) {
+        .tech-subtitle {
+          font-size: 4rem;
+          margin-top: -1rem;
+        }
       }
 
       .tech-subtitle::after {
@@ -299,7 +360,6 @@
         margin-left: 0.1em;
         animation: techCursorBlink 0.9s step-end infinite;
       }
-
       @keyframes techSubtitleTyping {
         0% {
           opacity: 0;
@@ -315,7 +375,6 @@
           letter-spacing: 0.2em;
         }
       }
-
       @keyframes techCursorBlink {
         0%,
         100% {
@@ -330,7 +389,6 @@
         display: inline-block;
         margin-left: 0.3em;
       }
-
       .tech-text {
         display: inline-block;
         font-size: 0.5em;
@@ -343,7 +401,6 @@
           0 0 40px var(--accent);
         position: relative;
       }
-
       .tech-text::after {
         content: "";
         position: absolute;
@@ -354,7 +411,6 @@
         background: var(--accent);
         animation: techBlink 0.8s step-end infinite;
       }
-
       @keyframes techFadeIn {
         0% {
           opacity: 0;
@@ -370,7 +426,6 @@
           letter-spacing: 0.1em;
         }
       }
-
       @keyframes techBlink {
         0%,
         100% {
@@ -381,7 +436,6 @@
         }
       }
 
-      /* TERMINAL ANIMATION FOR "SOON" */
       .blink-cursor {
         animation: blink 1s step-end infinite;
       }
@@ -398,49 +452,46 @@
       .status-soon {
         color: var(--warning);
         font-family: monospace;
-        font-size: 0.8rem;
-        letter-spacing: 1px;
+        font-size: 0.7rem;
+        letter-spacing: 0.5px;
         background: rgba(255, 183, 0, 0.1);
-        padding: 4px 8px;
+        padding: 4px 6px;
         border-radius: 4px;
         border: 1px solid rgba(255, 183, 0, 0.3);
+        display: inline-block;
       }
-
       .status-active {
         color: var(--accent);
         font-family: monospace;
-        font-size: 0.8rem;
-        letter-spacing: 1px;
+        font-size: 0.7rem;
+        letter-spacing: 0.5px;
         background: rgba(0, 255, 135, 0.1);
-        padding: 4px 8px;
+        padding: 4px 6px;
         border-radius: 4px;
         border: 1px solid rgba(0, 255, 135, 0.3);
+        display: inline-block;
+      }
+
+      @media (min-width: 768px) {
+        .status-soon,
+        .status-active {
+          font-size: 0.8rem;
+          padding: 4px 8px;
+          letter-spacing: 1px;
+        }
       }
 
       ::-webkit-scrollbar {
         width: 0px;
       }
 
-      /* Footer Animation */
       footer {
         opacity: 0;
         transform: translateY(50px);
       }
-
       .footer-item {
         opacity: 0;
         transform: translateY(30px);
-      }
-
-      @media (max-width: 1024px) {
-        .bento-grid {
-          grid-template-columns: repeat(2, 1fr);
-        }
-      }
-      @media (max-width: 768px) {
-        .tech-subtitle {
-          font-size: 2.5rem;
-        }
       }
     </style>
   </head>
@@ -452,13 +503,16 @@
         <div class="loading-text">SYSTEM INITIALIZING...</div>
       </div>
     </div>
+
     <div id="custom-cursor"></div>
     <div id="cursor-follower"></div>
 
     <nav
-      class="fixed top-0 left-0 w-full p-8 z-50 flex justify-between items-center"
+      class="fixed top-0 left-0 w-full p-4 md:p-8 z-50 flex justify-between items-center"
     >
-      <div class="text-2xl font-bold tracking-tighter flex items-center gap-2">
+      <div
+        class="text-xl md:text-2xl font-bold tracking-tighter flex items-center gap-2"
+      >
         <span class="text-[var(--accent)]">TERRA</span>FERRO<span
           class="tech-wrapper"
           ><span
@@ -509,22 +563,19 @@
       </div>
     </nav>
 
-    <div id="scroll-path">
-      <div id="scroll-bar"></div>
-    </div>
-
+    <div id="scroll-path"><div id="scroll-bar"></div></div>
     <div id="canvas-container"></div>
 
     <main class="relative z-10">
       <section id="hero">
-        <div class="max-w-4xl">
+        <div class="max-w-4xl w-full">
           <span
-            class="text-[var(--accent)] font-mono tracking-widest mb-4 block"
+            class="text-[var(--accent)] font-mono tracking-widest mb-4 block text-xs md:text-base"
             data-t="hero-sub"
             >EST. 2025 // STEEL & SILICON</span
           >
           <h1
-            class="text-6xl md:text-9xl mb-8 scramble-text"
+            class="text-4xl md:text-9xl mb-4 md:mb-8 scramble-text"
             data-text="TERRA FERRO"
             data-t="hero-title"
           >
@@ -532,13 +583,13 @@
           </h1>
           <div class="tech-subtitle">TECH</div>
           <p
-            class="text-lg md:text-xl text-[var(--accent)] font-mono mb-4 tracking-wide"
+            class="text-base md:text-xl text-[var(--accent)] font-mono mb-4 tracking-wide"
             data-t="hero-tagline"
           >
             Forging the Present, Coding the Future
           </p>
           <p
-            class="text-xl md:text-2xl text-white/50 mb-12 max-w-2xl leading-relaxed"
+            class="text-sm md:text-2xl text-white/50 mb-8 md:mb-12 max-w-2xl leading-relaxed"
             data-t="hero-desc"
           >
             We supply the industry's most durable agricultural attachments
@@ -555,33 +606,36 @@
 
       <section id="hardware">
         <div class="w-full">
-          <div class="mb-16">
+          <div class="mb-10 md:mb-16">
             <h2
-              class="text-5xl md:text-8xl mb-4 scramble-text"
+              class="text-3xl md:text-8xl mb-2 md:mb-4 scramble-text"
               data-text="STEEL ROOTS"
               data-t="hw-title"
             >
               STEEL ROOTS
             </h2>
-            <p class="text-[var(--accent)] font-mono" data-t="hw-sub">
+            <p
+              class="text-[var(--accent)] font-mono text-xs md:text-base"
+              data-t="hw-sub"
+            >
               CURRENT OPERATIONS // ACTIVE
             </p>
           </div>
 
           <div class="bento-grid">
             <div
-              class="bento-item glass-panel col-span-2 p-10 flex flex-col justify-between min-h-[300px]"
+              class="bento-item glass-panel col-span-2 p-6 md:p-10 flex flex-col justify-between min-h-[250px] md:min-h-[300px]"
             >
               <div>
                 <div class="flex justify-between items-start mb-4">
-                  <h3 class="text-3xl" data-t="hw-card1-t">
+                  <h3 class="text-xl md:text-3xl" data-t="hw-card1-t">
                     Industrial Attachments
                   </h3>
                   <span class="status-active" data-t="status-online"
                     >● ONLINE</span
                   >
                 </div>
-                <p class="opacity-40" data-t="hw-card1-d">
+                <p class="opacity-40 text-sm md:text-base" data-t="hw-card1-d">
                   We currently manufacture and supply high-tensile steel plows,
                   seeders, and harvesters. Engineered to endure the toughest
                   soil conditions on the planet.
@@ -594,12 +648,14 @@
             </div>
 
             <div
-              class="bento-item glass-panel col-span-2 p-10 flex items-center justify-center text-center border-l-2 border-[var(--accent)]"
+              class="bento-item glass-panel col-span-2 p-6 md:p-10 flex items-center justify-center text-center border-l-2 border-[var(--accent)]"
             >
               <div>
-                <div class="text-5xl font-bold text-white mb-2">100%</div>
+                <div class="text-4xl md:text-5xl font-bold text-white mb-2">
+                  100%
+                </div>
                 <p
-                  class="text-xs tracking-[0.2em] text-[var(--accent)] uppercase"
+                  class="text-[10px] md:text-xs tracking-[0.2em] text-[var(--accent)] uppercase"
                   data-t="hw-stat"
                 >
                   Mechanical Durability
@@ -612,28 +668,34 @@
 
       <section id="future">
         <div class="w-full">
-          <div class="mb-16 text-right">
+          <div class="mb-10 md:mb-16 text-right">
             <h2
-              class="text-5xl md:text-8xl mb-4 scramble-text"
+              class="text-3xl md:text-8xl mb-2 md:mb-4 scramble-text"
               data-text="FUTURE_CORE"
               data-t="ft-title"
             >
               FUTURE_CORE
             </h2>
-            <p class="text-[var(--it-cyan)] font-mono" data-t="ft-sub">
+            <p
+              class="text-[var(--it-cyan)] font-mono text-xs md:text-base"
+              data-t="ft-sub"
+            >
               R&D LABORATORY // LOADING...
             </p>
           </div>
 
           <div class="bento-grid">
             <div
-              class="bento-item glass-panel col-span-2 p-10 relative overflow-hidden"
+              class="bento-item glass-panel col-span-2 p-6 md:p-10 relative overflow-hidden"
             >
               <div
                 class="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-transparent via-[var(--warning)] to-transparent opacity-50"
               ></div>
               <div class="flex justify-between items-start mb-6">
-                <h3 class="text-2xl text-white/90" data-t="ft-card1-t">
+                <h3
+                  class="text-lg md:text-2xl text-white/90"
+                  data-t="ft-card1-t"
+                >
                   Autonomous Fleet
                 </h3>
                 <span class="status-soon" data-t="status-load"
@@ -641,13 +703,13 @@
                 >
               </div>
               <p
-                class="font-mono text-xs text-[var(--it-cyan)] mb-4 opacity-70"
+                class="font-mono text-[10px] md:text-xs text-[var(--it-cyan)] mb-4 opacity-70"
               >
                 > SYSTEM_CHECK: PENDING<br />
                 > DRIVER_MODULE: REMOVING...<br />
                 > AI_INTEGRATION: 45%
               </p>
-              <p class="text-white/40 text-sm" data-t="ft-card1-d">
+              <p class="text-white/40 text-xs md:text-sm" data-t="ft-card1-d">
                 Soon, our attachments will not need drivers. We are developing
                 the AI logic for fully unmanned tractors that work the fields
                 24/7.
@@ -655,10 +717,13 @@
             </div>
 
             <div
-              class="bento-item glass-panel col-span-2 p-10 border-t border-[var(--it-cyan)]"
+              class="bento-item glass-panel col-span-2 p-6 md:p-10 border-t border-[var(--it-cyan)]"
             >
               <div class="flex justify-between items-start mb-6">
-                <h3 class="text-2xl text-white/90" data-t="ft-card2-t">
+                <h3
+                  class="text-lg md:text-2xl text-white/90"
+                  data-t="ft-card2-t"
+                >
                   Anomaly Detection
                 </h3>
                 <span class="status-soon" data-t="status-load"
@@ -666,13 +731,13 @@
                 >
               </div>
               <p
-                class="font-mono text-xs text-[var(--it-cyan)] mb-4 opacity-70"
+                class="font-mono text-[10px] md:text-xs text-[var(--it-cyan)] mb-4 opacity-70"
               >
                 > DRONE_UPLINK: WAITING<br />
                 > SOIL_DATA: ENCRYPTING<br />
                 > PREDICTION_MODEL: TRAINING...
               </p>
-              <p class="text-white/40 text-sm" data-t="ft-card2-d">
+              <p class="text-white/40 text-xs md:text-sm" data-t="ft-card2-d">
                 Upcoming drone services will scan for diseases and soil health,
                 feeding data directly to our anomalies detection algorithm.
               </p>
@@ -681,10 +746,14 @@
             <div
               class="bento-item glass-panel col-span-4 p-6 flex justify-between items-center bg-white/5"
             >
-              <span class="font-mono text-xs text-white/30" data-t="ft-footer"
+              <span
+                class="font-mono text-[10px] md:text-xs text-white/30"
+                data-t="ft-footer"
                 >Transitioning from Hardware to Intelligence.</span
               >
-              <div class="h-2 w-32 bg-gray-800 rounded-full overflow-hidden">
+              <div
+                class="h-2 w-20 md:w-32 bg-gray-800 rounded-full overflow-hidden"
+              >
                 <div
                   class="h-full bg-[var(--it-cyan)] w-[60%] animate-pulse"
                 ></div>
@@ -697,13 +766,13 @@
 
     <footer
       id="main-footer"
-      class="p-20 border-t border-white/5 relative z-20 bg-black/80 backdrop-blur-md"
+      class="p-10 md:p-20 border-t border-white/5 relative z-20 bg-black/80 backdrop-blur-md"
     >
       <div
         class="flex flex-col md:flex-row justify-between items-center gap-10"
       >
         <div class="text-center md:text-left footer-item">
-          <div class="text-2xl font-bold mb-4">
+          <div class="text-xl md:text-2xl font-bold mb-4">
             TERRAFERRO<span class="text-[var(--accent)]">TECH</span>.
           </div>
           <p class="opacity-30 text-[10px] tracking-widest uppercase mb-2">
@@ -718,15 +787,14 @@
           <a
             id="contact-email"
             href="#"
-            class="hover:text-[var(--accent)] transition-colors"
+            class="hover:text-[var(--accent)] transition-colors text-sm"
           ></a>
           <a
             id="contact-tel"
             href="#"
-            class="hover:text-[var(--accent)] transition-colors"
+            class="hover:text-[var(--accent)] transition-colors text-sm"
           ></a>
-
-          <div class="text-sm opacity-60">
+          <div class="text-xs md:text-sm opacity-60">
             <span class="text-[var(--accent)]">LOCATION:</span> Lushnje, Albania
           </div>
         </div>
@@ -734,10 +802,10 @@
     </footer>
 
     <script>
-      // --- SPAM KORUMASI (Geri eklendi) ---
+      // --- SPAM KORUMASI ---
       function protectContact() {
-        const email = atob("dGVycmFmZXJyb3RlY2hAZ21haWwuY29t"); // terraferrotech@gmail.com
-        const tel = atob("KzM1NSA3NSAyMzcgODMgODM="); // +355 75 237 83
+        const email = atob("dGVycmFmZXJyb3RlY2hAZ21haWwuY29t");
+        const tel = atob("KzM1NSA3NSAyMzcgODMgODM=");
 
         const emailEl = document.getElementById("contact-email");
         const telEl = document.getElementById("contact-tel");
@@ -752,7 +820,6 @@
         }
       }
 
-      // Sayfa yüklenince korumayı çalıştır
       window.addEventListener("load", protectContact);
 
       // --- TRANSLATION DATA ---
@@ -767,7 +834,6 @@
           "hero-desc":
             "We supply the industry's most durable agricultural attachments today, while engineering the autonomous drones and data swarms of tomorrow.",
           "hero-btn": "Explore Hardware",
-
           "hw-title": "STEEL ROOTS",
           "hw-sub": "CURRENT OPERATIONS // ACTIVE",
           "hw-card1-t": "Industrial Attachments",
@@ -775,7 +841,6 @@
           "hw-card1-d":
             "We currently manufacture and supply high-tensile steel plows, seeders, and harvesters. Engineered to endure the toughest soil conditions on the planet.",
           "hw-stat": "Mechanical Durability",
-
           "ft-title": "FUTURE_CORE",
           "ft-sub": "R&D LABORATORY // LOADING...",
           "ft-card1-t": "Autonomous Fleet",
@@ -797,7 +862,6 @@
           "hero-desc":
             "Ne furnizojmë sot bashkëngjitjet bujqësore më të qëndrueshme të industrisë, ndërkohë që inxhinierojmë dronët autonomë dhe tufat e të dhënave të së nesërmes.",
           "hero-btn": "Eksploro Harduerin",
-
           "hw-title": "RRËNJËT E ÇELIKUT",
           "hw-sub": "OPERACIONET AKTUALE // AKTIV",
           "hw-card1-t": "Bashkëngjitje Industriale",
@@ -805,7 +869,6 @@
           "hw-card1-d":
             "Aktualisht prodhojmë dhe furnizojmë plugje çeliku me tërheqje të lartë, mbjellëse dhe korrëse. Inxhinieruar për të përballuar kushtet më të vështira të tokës.",
           "hw-stat": "Qëndrueshmëria Mekanike",
-
           "ft-title": "BËRTHAMA E ARDHSHME",
           "ft-sub": "LABORATORI R&D // DUKE U NGARKUAR...",
           "ft-card1-t": "Flota Autonome",
@@ -827,7 +890,6 @@
           "hero-desc":
             "Bugün endüstrinin en dayanıklı tarım ataçmanlarını sağlarken, yarının otonom dronlarını ve veri sürülerini tasarlıyoruz.",
           "hero-btn": "Donanımı Keşfet",
-
           "hw-title": "ÇELİK KÖKLER",
           "hw-sub": "MEVCUT OPERASYONLAR // AKTİF",
           "hw-card1-t": "Endüstriyel Ataçmanlar",
@@ -835,7 +897,6 @@
           "hw-card1-d":
             "Şu anda yüksek mukavemetli çelik pulluklar, ekim makineleri ve hasat makineleri üretiyor ve tedarik ediyoruz. Gezegenin en zorlu toprak koşullarına dayanacak şekilde tasarlandı.",
           "hw-stat": "Mekanik Dayanıklılık",
-
           "ft-title": "GELECEK ÇEKİRDEĞİ",
           "ft-sub": "AR-GE LABORATUVARI // YÜKLENİYOR...",
           "ft-card1-t": "Otonom Filo",
@@ -854,14 +915,13 @@
           .querySelectorAll(".lang-btn")
           .forEach((btn) => btn.classList.remove("active"));
         document.getElementById(`lang-${lang}`).classList.add("active");
-
         document.querySelectorAll("[data-t]").forEach((el) => {
           const key = el.getAttribute("data-t");
           if (translations[lang][key]) {
             if (el.classList.contains("scramble-text")) {
               el.setAttribute("data-text", translations[lang][key]);
             } else {
-              el.innerHTML = translations[lang][key]; // innerHTML allows formatting like <span>
+              el.innerHTML = translations[lang][key];
             }
           }
         });
@@ -928,7 +988,7 @@
         });
       }
 
-      // --- THREE.JS SCENE - Optimized ---
+      // --- THREE.JS SCENE - Optimized for Mobile ---
       let scene, camera, renderer, crystal;
       function initThree() {
         scene = new THREE.Scene();
@@ -938,6 +998,7 @@
           0.1,
           1000,
         );
+
         renderer = new THREE.WebGLRenderer({
           antialias: false,
           alpha: true,
@@ -949,7 +1010,6 @@
           .getElementById("canvas-container")
           .appendChild(renderer.domElement);
 
-        // Geo-Crystal (The Hybrid Core)
         const geometry = new THREE.OctahedronGeometry(3, 0);
         const material = new THREE.MeshBasicMaterial({
           color: 0x00ff87,
@@ -958,8 +1018,13 @@
           opacity: 0.2,
         });
         crystal = new THREE.Mesh(geometry, material);
-        scene.add(crystal);
 
+        // Mobilde kristali biraz küçült
+        if (window.innerWidth < 768) {
+          crystal.scale.set(0.6, 0.6, 0.6);
+        }
+
+        scene.add(crystal);
         camera.position.z = 10;
         animateThree();
       }
@@ -976,55 +1041,51 @@
         initThree();
         gsap.registerPlugin(ScrollTrigger, ScrollToPlugin);
 
-        // Cursor
-        const cursor = document.getElementById("custom-cursor");
-        const follower = document.getElementById("cursor-follower");
-        let mouseX = 0,
-          mouseY = 0;
-        let cursorX = 0,
-          cursorY = 0;
-        let followerX = 0,
-          followerY = 0;
+        // Custom Cursor sadece PC'de çalışsın (mobil dokunmatikte sorun olmasın)
+        if (window.matchMedia("(pointer: fine)").matches) {
+          const cursor = document.getElementById("custom-cursor");
+          const follower = document.getElementById("cursor-follower");
+          let mouseX = 0,
+            mouseY = 0;
+          let cursorX = 0,
+            cursorY = 0;
+          let followerX = 0,
+            followerY = 0;
 
-        window.addEventListener("mousemove", (e) => {
-          mouseX = e.clientX;
-          mouseY = e.clientY;
-        });
+          window.addEventListener("mousemove", (e) => {
+            mouseX = e.clientX;
+            mouseY = e.clientY;
+          });
 
-        function updateCursor() {
-          cursorX = mouseX;
-          cursorY = mouseY;
-          followerX += (mouseX - followerX) * 0.15;
-          followerY += (mouseY - followerY) * 0.15;
+          function updateCursor() {
+            cursorX = mouseX;
+            cursorY = mouseY;
+            followerX += (mouseX - followerX) * 0.15;
+            followerY += (mouseY - followerY) * 0.15;
 
-          cursor.style.transform = `translate(${cursorX}px, ${cursorY}px)`;
-          follower.style.transform = `translate(${followerX - 17}px, ${followerY - 17}px)`;
+            cursor.style.transform = `translate(${cursorX}px, ${cursorY}px)`;
+            follower.style.transform = `translate(${followerX - 17}px, ${followerY - 17}px)`;
 
-          requestAnimationFrame(updateCursor);
+            requestAnimationFrame(updateCursor);
+          }
+          updateCursor();
         }
-        updateCursor();
 
-        // Smooth Scroll for Navigation Links
         document.querySelectorAll('a[href^="#"]').forEach((anchor) => {
           anchor.addEventListener("click", function (e) {
             e.preventDefault();
             const targetId = this.getAttribute("href");
             const targetSection = document.querySelector(targetId);
-
             if (targetSection) {
               gsap.to(window, {
                 duration: 1.5,
-                scrollTo: {
-                  y: targetSection,
-                  offsetY: 0,
-                },
+                scrollTo: { y: targetSection, offsetY: 0 },
                 ease: "power3.inOut",
               });
             }
           });
         });
 
-        // Scramble Init
         const headers = document.querySelectorAll(".scramble-text");
         headers.forEach((h) => {
           h.style.visibility = "visible";
@@ -1036,7 +1097,7 @@
           });
         });
 
-        // Scroll Bar
+        // Scroll Bar Animasyon
         gsap.to("#scroll-bar", {
           height: "100%",
           scrollTrigger: {
@@ -1086,7 +1147,6 @@
           },
         });
 
-        // Footer Smooth Entrance Animation
         gsap.to("#main-footer", {
           opacity: 1,
           y: 0,
@@ -1100,7 +1160,6 @@
           },
         });
 
-        // Footer Items Stagger Animation
         gsap.to(".footer-item", {
           opacity: 1,
           y: 0,
@@ -1115,7 +1174,6 @@
         });
       });
 
-      // Resize handler
       let resizeTimeout;
       window.addEventListener("resize", () => {
         clearTimeout(resizeTimeout);
@@ -1123,10 +1181,16 @@
           camera.aspect = window.innerWidth / window.innerHeight;
           camera.updateProjectionMatrix();
           renderer.setSize(window.innerWidth, window.innerHeight);
+
+          // Resize olunca kristal boyutunu tekrar kontrol et
+          if (window.innerWidth < 768) {
+            crystal.scale.set(0.6, 0.6, 0.6);
+          } else {
+            crystal.scale.set(1, 1, 1);
+          }
         }, 100);
       });
 
-      // --- PRELOADER SCRIPT ---
       window.addEventListener("load", () => {
         const preloader = document.getElementById("preloader");
         setTimeout(() => {
