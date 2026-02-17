@@ -8,10 +8,32 @@
       href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;500;700&family=Inter:wght@300;400;600&display=swap"
       rel="stylesheet"
     />
+
     <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+      tailwind.config = {
+        theme: {
+          extend: {
+            colors: {
+              obsidian: "#080808",
+              accent: "#00ff87",
+              itCyan: "#00f5ff",
+              warning: "#ffb700",
+            },
+            fontFamily: {
+              space: ["Space Grotesk", "sans-serif"],
+              inter: ["Inter", "sans-serif"],
+            },
+          },
+        },
+      };
+    </script>
+
     <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/ScrollTrigger.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/ScrollToPlugin.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+
     <style>
       :root {
         --obsidian: #080808;
@@ -35,7 +57,6 @@
         color: var(--text-main);
         font-family: "Inter", sans-serif;
         overflow-x: hidden;
-        scroll-behavior: smooth;
       }
 
       h1,
@@ -45,7 +66,7 @@
         font-weight: 700;
       }
 
-      /* Custom Cursor - Optimized */
+      /* Custom Cursor */
       #custom-cursor {
         position: fixed;
         width: 10px;
@@ -171,7 +192,6 @@
           visibility 0.8s ease-in-out;
       }
 
-      /* Preloader kapandığında uygulanacak sınıf */
       #preloader.loaded {
         opacity: 0;
         visibility: hidden;
@@ -187,29 +207,57 @@
       }
 
       .loading-text {
+        margin-top: 20px;
         font-family: "Space Grotesk", sans-serif;
         color: var(--accent);
-        font-size: 18px;
-        letter-spacing: 4px;
-        font-weight: 700;
+        font-size: 12px;
+        letter-spacing: 3px;
+        animation: textBlink 1.5s infinite;
+        opacity: 0.7;
+        position: relative;
+        z-index: 10;
       }
 
-      .loading-spinner {
-        width: 50px;
-        height: 50px;
-        border: 3px solid rgba(0, 255, 135, 0.1);
-        border-top: 3px solid var(--accent);
+      .pulse-ring {
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        width: 80px;
+        height: 80px;
         border-radius: 50%;
-        animation: spin 1s linear infinite;
-        margin-bottom: 20px;
+        border: 2px solid var(--accent);
+        opacity: 0;
+        animation: pulseRipple 3s linear infinite;
       }
 
-      @keyframes spin {
+      .pulse-ring.delay {
+        animation-delay: 1.5s;
+      }
+
+      /* === ANİMASYONLAR === */
+      @keyframes pulseRipple {
         0% {
-          transform: rotate(0deg);
+          width: 80px;
+          height: 80px;
+          opacity: 0.8;
+          border-width: 3px;
         }
         100% {
-          transform: rotate(360deg);
+          width: 400px;
+          height: 400px;
+          opacity: 0;
+          border-width: 1px;
+        }
+      }
+
+      @keyframes textBlink {
+        0%,
+        100% {
+          opacity: 0.3;
+        }
+        50% {
+          opacity: 1;
         }
       }
 
@@ -226,7 +274,7 @@
         visibility: hidden;
       }
 
-      /* TECH for Hero - Below title */
+      /* TECH Typing Animation */
       .tech-subtitle {
         display: block;
         font-size: 4rem;
@@ -278,13 +326,6 @@
         }
       }
 
-      @media (max-width: 768px) {
-        .tech-subtitle {
-          font-size: 2.5rem;
-        }
-      }
-
-      /* TECH Typing Animation */
       .tech-wrapper {
         display: inline-block;
         margin-left: 0.3em;
@@ -303,25 +344,7 @@
         position: relative;
       }
 
-      /* TECH for Hero - Larger and more prominent */
-      .tech-text-hero {
-        display: inline-block;
-        font-size: 0.45em;
-        color: var(--accent);
-        opacity: 0;
-        animation: techFadeInHero 1.2s ease-out 2s forwards;
-        letter-spacing: 0.15em;
-        text-shadow:
-          0 0 30px var(--accent),
-          0 0 60px var(--accent),
-          0 0 90px rgba(0, 255, 135, 0.5);
-        position: relative;
-        font-weight: 700;
-        vertical-align: middle;
-      }
-
-      .tech-text::after,
-      .tech-text-hero::after {
+      .tech-text::after {
         content: "";
         position: absolute;
         right: -0.5em;
@@ -330,22 +353,6 @@
         height: 100%;
         background: var(--accent);
         animation: techBlink 0.8s step-end infinite;
-      }
-
-      @keyframes techFadeInHero {
-        0% {
-          opacity: 0;
-          transform: translateX(-20px) scale(0.8);
-          letter-spacing: -0.5em;
-        }
-        50% {
-          letter-spacing: 0.4em;
-        }
-        100% {
-          opacity: 1;
-          transform: translateX(0) scale(1);
-          letter-spacing: 0.15em;
-        }
       }
 
       @keyframes techFadeIn {
@@ -414,9 +421,25 @@
         width: 0px;
       }
 
+      /* Footer Animation */
+      footer {
+        opacity: 0;
+        transform: translateY(50px);
+      }
+
+      .footer-item {
+        opacity: 0;
+        transform: translateY(30px);
+      }
+
       @media (max-width: 1024px) {
         .bento-grid {
           grid-template-columns: repeat(2, 1fr);
+        }
+      }
+      @media (max-width: 768px) {
+        .tech-subtitle {
+          font-size: 2.5rem;
         }
       }
     </style>
@@ -424,8 +447,9 @@
   <body>
     <div id="preloader">
       <div class="loader-container">
-        <div class="loading-spinner"></div>
-        <div class="loading-text">TERRA FERRO</div>
+        <div class="pulse-ring"></div>
+        <div class="pulse-ring delay"></div>
+        <div class="loading-text">SYSTEM INITIALIZING...</div>
       </div>
     </div>
     <div id="custom-cursor"></div>
@@ -672,17 +696,65 @@
     </main>
 
     <footer
-      class="p-20 text-center border-t border-white/5 relative z-20 bg-black/80 backdrop-blur-md"
+      id="main-footer"
+      class="p-20 border-t border-white/5 relative z-20 bg-black/80 backdrop-blur-md"
     >
-      <div class="text-2xl font-bold mb-4">
-        TERRAFERRO<span class="text-[var(--accent)]">TECH</span>.
+      <div
+        class="flex flex-col md:flex-row justify-between items-center gap-10"
+      >
+        <div class="text-center md:text-left footer-item">
+          <div class="text-2xl font-bold mb-4">
+            TERRAFERRO<span class="text-[var(--accent)]">TECH</span>.
+          </div>
+          <p class="opacity-30 text-[10px] tracking-widest uppercase mb-2">
+            Global Operations
+          </p>
+          <p class="opacity-50 text-xs">© 2025 All Rights Reserved.</p>
+        </div>
+
+        <div
+          class="flex flex-col gap-4 text-center md:text-right font-mono footer-item"
+        >
+          <a
+            id="contact-email"
+            href="#"
+            class="hover:text-[var(--accent)] transition-colors"
+          ></a>
+          <a
+            id="contact-tel"
+            href="#"
+            class="hover:text-[var(--accent)] transition-colors"
+          ></a>
+
+          <div class="text-sm opacity-60">
+            <span class="text-[var(--accent)]">LOCATION:</span> Lushnje, Albania
+          </div>
+        </div>
       </div>
-      <p class="opacity-30 text-[10px] tracking-widest uppercase">
-        Global Operations / Hardware & Software Roadmap
-      </p>
     </footer>
 
     <script>
+      // --- SPAM KORUMASI (Geri eklendi) ---
+      function protectContact() {
+        const email = atob("dGVycmFmZXJyb3RlY2hAZ21haWwuY29t"); // terraferrotech@gmail.com
+        const tel = atob("KzM1NSA3NSAyMzcgODMgODM="); // +355 75 237 83
+
+        const emailEl = document.getElementById("contact-email");
+        const telEl = document.getElementById("contact-tel");
+
+        if (emailEl) {
+          emailEl.href = "mailto:" + email;
+          emailEl.innerText = email;
+        }
+        if (telEl) {
+          telEl.href = "tel:" + tel.replace(/\s/g, "");
+          telEl.innerText = tel;
+        }
+      }
+
+      // Sayfa yüklenince korumayı çalıştır
+      window.addEventListener("load", protectContact);
+
       // --- TRANSLATION DATA ---
       const translations = {
         en: {
@@ -867,20 +939,19 @@
           1000,
         );
         renderer = new THREE.WebGLRenderer({
-          antialias: false, // Antialiasing kapatıldı - performans için
+          antialias: false,
           alpha: true,
           powerPreference: "high-performance",
         });
-        renderer.setPixelRatio(Math.min(window.devicePixelRatio, 1.5)); // Pixel ratio sınırlandı
+        renderer.setPixelRatio(Math.min(window.devicePixelRatio, 1.5));
         renderer.setSize(window.innerWidth, window.innerHeight);
         document
           .getElementById("canvas-container")
           .appendChild(renderer.domElement);
 
-        // Geo-Crystal (The Hybrid Core) - Basitleştirildi
+        // Geo-Crystal (The Hybrid Core)
         const geometry = new THREE.OctahedronGeometry(3, 0);
         const material = new THREE.MeshBasicMaterial({
-          // Phong yerine Basic - daha hızlı
           color: 0x00ff87,
           wireframe: true,
           transparent: true,
@@ -895,7 +966,7 @@
 
       function animateThree() {
         requestAnimationFrame(animateThree);
-        crystal.rotation.y += 0.002; // Rotasyon hızı azaltıldı
+        crystal.rotation.y += 0.002;
         crystal.rotation.x += 0.0008;
         renderer.render(scene, camera);
       }
@@ -903,9 +974,9 @@
       // --- GSAP & INTERACTION ---
       window.addEventListener("DOMContentLoaded", () => {
         initThree();
-        gsap.registerPlugin(ScrollTrigger);
+        gsap.registerPlugin(ScrollTrigger, ScrollToPlugin);
 
-        // Cursor - Optimized with requestAnimationFrame
+        // Cursor
         const cursor = document.getElementById("custom-cursor");
         const follower = document.getElementById("cursor-follower");
         let mouseX = 0,
@@ -921,7 +992,6 @@
         });
 
         function updateCursor() {
-          // Smooth interpolation
           cursorX = mouseX;
           cursorY = mouseY;
           followerX += (mouseX - followerX) * 0.15;
@@ -933,6 +1003,26 @@
           requestAnimationFrame(updateCursor);
         }
         updateCursor();
+
+        // Smooth Scroll for Navigation Links
+        document.querySelectorAll('a[href^="#"]').forEach((anchor) => {
+          anchor.addEventListener("click", function (e) {
+            e.preventDefault();
+            const targetId = this.getAttribute("href");
+            const targetSection = document.querySelector(targetId);
+
+            if (targetSection) {
+              gsap.to(window, {
+                duration: 1.5,
+                scrollTo: {
+                  y: targetSection,
+                  offsetY: 0,
+                },
+                ease: "power3.inOut",
+              });
+            }
+          });
+        });
 
         // Scramble Init
         const headers = document.querySelectorAll(".scramble-text");
@@ -969,7 +1059,7 @@
           },
         });
 
-        // Section Theme Swapping (Hardware = Green, Future = Cyan)
+        // Section Theme Swapping
         ScrollTrigger.create({
           trigger: "#future",
           start: "top center",
@@ -979,7 +1069,7 @@
               g: 0.96,
               b: 1,
               duration: 1,
-            }); // Cyan
+            });
             document.documentElement.style.setProperty(
               "--accent",
               "var(--it-cyan)",
@@ -991,13 +1081,41 @@
               g: 1,
               b: 0.52,
               duration: 1,
-            }); // Green
+            });
             document.documentElement.style.setProperty("--accent", "#00FF87");
+          },
+        });
+
+        // Footer Smooth Entrance Animation
+        gsap.to("#main-footer", {
+          opacity: 1,
+          y: 0,
+          duration: 1.2,
+          ease: "power2.out",
+          scrollTrigger: {
+            trigger: "#main-footer",
+            start: "top 90%",
+            end: "top 60%",
+            toggleActions: "play none none reverse",
+          },
+        });
+
+        // Footer Items Stagger Animation
+        gsap.to(".footer-item", {
+          opacity: 1,
+          y: 0,
+          duration: 0.8,
+          stagger: 0.2,
+          ease: "power2.out",
+          scrollTrigger: {
+            trigger: "#main-footer",
+            start: "top 85%",
+            toggleActions: "play none none reverse",
           },
         });
       });
 
-      // Resize handler - debounced for performance
+      // Resize handler
       let resizeTimeout;
       window.addEventListener("resize", () => {
         clearTimeout(resizeTimeout);
@@ -1008,12 +1126,12 @@
         }, 100);
       });
 
-      // --- PRELOADER SCRIPT - Hızlandırıldı ---
+      // --- PRELOADER SCRIPT ---
       window.addEventListener("load", () => {
         const preloader = document.getElementById("preloader");
         setTimeout(() => {
           preloader.classList.add("loaded");
-        }, 500); // 0.5 saniye - daha hızlı
+        }, 1000);
       });
     </script>
   </body>
