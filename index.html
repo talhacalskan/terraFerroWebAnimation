@@ -2,7 +2,10 @@
 <html lang="en">
   <head>
     <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no"
+    />
     <title>TerraFerroTech | Steel & Silicon</title>
     <link
       href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;500;700&family=Inter:wght@300;400;600&display=swap"
@@ -45,15 +48,24 @@
         --glass-border: rgba(255, 255, 255, 0.08);
       }
 
+      /* GLOBAL RESET */
       * {
         margin: 0;
         padding: 0;
         box-sizing: border-box;
-        cursor: none; /* Masaüstünde imleç yok */
+        outline: none;
+        -webkit-tap-highlight-color: transparent;
       }
 
-      /* Mobilde standart imleci geri getir, yoksa tıklamak zor olur */
-      @media (pointer: coarse) {
+      /* Desktop Cursor Logic */
+      @media (pointer: fine) {
+        * {
+          cursor: none;
+        }
+      }
+
+      /* Mobile Logic - Reset Cursor */
+      @media (hover: none) and (pointer: coarse) {
         * {
           cursor: auto !important;
         }
@@ -77,7 +89,7 @@
         font-weight: 700;
       }
 
-      /* Custom Cursor */
+      /* Custom Cursor Styles */
       #custom-cursor {
         position: fixed;
         width: 10px;
@@ -89,7 +101,6 @@
         will-change: transform;
         mix-blend-mode: difference;
       }
-
       #cursor-follower {
         position: fixed;
         width: 35px;
@@ -102,7 +113,7 @@
         transition: border-color 0.3s ease;
       }
 
-      /* Glassmorphism */
+      /* Glass Panel */
       .glass-panel {
         background: var(--glass);
         backdrop-filter: blur(15px);
@@ -113,13 +124,12 @@
           border-color 0.3s ease,
           background 0.3s ease;
       }
-
       .glass-panel:hover {
         border-color: rgba(255, 255, 255, 0.2);
         background: rgba(255, 255, 255, 0.05);
       }
 
-      /* Language Switcher UI */
+      /* Language Buttons */
       .lang-btn {
         opacity: 0.4;
         transition:
@@ -132,17 +142,18 @@
         font-weight: bold;
       }
 
-      /* 3D Container */
+      /* 3D Scene */
       #canvas-container {
         position: fixed;
         top: 0;
         left: 0;
-        width: 100%;
+        width: 100vw;
         height: 100vh;
         z-index: 0;
+        pointer-events: none;
       }
 
-      /* Scroll Progress Line - Mobilde gizle */
+      /* Scroll Bar - Hidden on Mobile */
       #scroll-path {
         position: fixed;
         top: 0;
@@ -151,7 +162,7 @@
         height: 100%;
         background: rgba(255, 255, 255, 0.05);
         z-index: 5;
-        display: none; /* Varsayılan gizli */
+        display: none;
       }
       #scroll-bar {
         width: 100%;
@@ -159,22 +170,21 @@
         background: var(--accent);
         box-shadow: 0 0 15px var(--accent);
       }
-
       @media (min-width: 768px) {
         #scroll-path {
           display: block;
         }
       }
 
-      /* Sections */
+      /* Sections Layout */
       section {
         min-height: 100vh;
         position: relative;
-        padding: 80px 5%; /* Mobilde daha az padding */
+        padding: 80px 20px;
         display: flex;
         align-items: center;
+        width: 100%;
       }
-
       @media (min-width: 768px) {
         section {
           padding: 100px 8%;
@@ -185,7 +195,7 @@
       .magnetic-btn {
         display: inline-flex;
         align-items: center;
-        padding: 12px 24px; /* Mobilde daha küçük buton */
+        padding: 14px 28px;
         background: var(--accent);
         color: var(--obsidian);
         border-radius: 4px;
@@ -195,13 +205,6 @@
         transition: box-shadow 0.3s;
         position: relative;
         font-size: 0.9rem;
-      }
-      @media (min-width: 768px) {
-        .magnetic-btn {
-          padding: 16px 36px;
-          letter-spacing: 2px;
-          font-size: 1rem;
-        }
       }
       .magnetic-btn:hover {
         box-shadow: 0 0 30px var(--accent);
@@ -243,14 +246,9 @@
         letter-spacing: 3px;
         animation: textBlink 1.5s infinite;
         opacity: 0.7;
-        position: relative;
-        z-index: 10;
       }
       .pulse-ring {
         position: absolute;
-        top: 50%;
-        left: 50%;
-        transform: translate(-50%, -50%);
         width: 80px;
         height: 80px;
         border-radius: 50%;
@@ -286,15 +284,13 @@
         }
       }
 
-      /* Bento Grid - MOBIL DUZENLEMESI */
+      /* Responsive Grid System */
       .bento-grid {
         display: grid;
-        grid-template-columns: 1fr; /* Mobilde tek sütun */
-        grid-template-rows: auto;
+        grid-template-columns: 1fr;
         gap: 20px;
         width: 100%;
       }
-
       @media (min-width: 768px) {
         .bento-grid {
           grid-template-columns: repeat(2, 1fr);
@@ -305,13 +301,10 @@
           grid-template-columns: repeat(4, 1fr);
         }
       }
-
-      /* Grid Span Düzeltmeleri */
       .col-span-2,
       .col-span-4 {
-        grid-column: span 1; /* Mobilde hepsi tek sütun */
+        grid-column: span 1;
       }
-
       @media (min-width: 768px) {
         .col-span-2 {
           grid-column: span 2;
@@ -330,18 +323,15 @@
         visibility: hidden;
       }
 
-      /* TECH Typing Animation */
+      /* Tech Subtitle Animation */
       .tech-subtitle {
         display: block;
-        font-size: 2.5rem; /* Mobilde küçültüldü */
+        font-size: 2.5rem;
         color: var(--accent);
         opacity: 0;
         animation: techSubtitleTyping 1.5s ease-out 2.5s forwards;
         letter-spacing: 0.2em;
-        text-shadow:
-          0 0 30px var(--accent),
-          0 0 60px var(--accent);
-        position: relative;
+        text-shadow: 0 0 30px var(--accent);
         font-family: "Space Grotesk", sans-serif;
         font-weight: 700;
         margin-top: -0.5rem;
@@ -353,21 +343,18 @@
           margin-top: -1rem;
         }
       }
-
       .tech-subtitle::after {
         content: "_";
         position: relative;
         margin-left: 0.1em;
         animation: techCursorBlink 0.9s step-end infinite;
       }
+
       @keyframes techSubtitleTyping {
         0% {
           opacity: 0;
           transform: translateX(-30px);
           letter-spacing: -0.3em;
-        }
-        40% {
-          letter-spacing: 0.35em;
         }
         100% {
           opacity: 1;
@@ -396,10 +383,6 @@
         opacity: 0;
         animation: techFadeIn 0.8s ease-out 1.5s forwards;
         letter-spacing: 0.1em;
-        text-shadow:
-          0 0 20px var(--accent),
-          0 0 40px var(--accent);
-        position: relative;
       }
       .tech-text::after {
         content: "";
@@ -415,15 +398,10 @@
         0% {
           opacity: 0;
           transform: translateX(-10px);
-          letter-spacing: -0.5em;
-        }
-        50% {
-          letter-spacing: 0.3em;
         }
         100% {
           opacity: 1;
           transform: translateX(0);
-          letter-spacing: 0.1em;
         }
       }
       @keyframes techBlink {
@@ -449,29 +427,25 @@
         }
       }
 
-      .status-soon {
-        color: var(--warning);
+      .status-soon,
+      .status-active {
         font-family: monospace;
         font-size: 0.7rem;
         letter-spacing: 0.5px;
-        background: rgba(255, 183, 0, 0.1);
         padding: 4px 6px;
         border-radius: 4px;
-        border: 1px solid rgba(255, 183, 0, 0.3);
         display: inline-block;
+      }
+      .status-soon {
+        color: var(--warning);
+        background: rgba(255, 183, 0, 0.1);
+        border: 1px solid rgba(255, 183, 0, 0.3);
       }
       .status-active {
         color: var(--accent);
-        font-family: monospace;
-        font-size: 0.7rem;
-        letter-spacing: 0.5px;
         background: rgba(0, 255, 135, 0.1);
-        padding: 4px 6px;
-        border-radius: 4px;
         border: 1px solid rgba(0, 255, 135, 0.3);
-        display: inline-block;
       }
-
       @media (min-width: 768px) {
         .status-soon,
         .status-active {
@@ -484,7 +458,6 @@
       ::-webkit-scrollbar {
         width: 0px;
       }
-
       footer {
         opacity: 0;
         transform: translateY(50px);
@@ -508,7 +481,7 @@
     <div id="cursor-follower"></div>
 
     <nav
-      class="fixed top-0 left-0 w-full p-4 md:p-8 z-50 flex justify-between items-center"
+      class="fixed top-0 left-0 w-full p-4 md:p-8 z-50 flex justify-between items-center bg-black/20 backdrop-blur-sm md:bg-transparent"
     >
       <div
         class="text-xl md:text-2xl font-bold tracking-tighter flex items-center gap-2"
@@ -566,16 +539,16 @@
     <div id="scroll-path"><div id="scroll-bar"></div></div>
     <div id="canvas-container"></div>
 
-    <main class="relative z-10">
+    <main class="relative z-10 w-full">
       <section id="hero">
-        <div class="max-w-4xl w-full">
+        <div class="max-w-4xl w-full mx-auto">
           <span
             class="text-[var(--accent)] font-mono tracking-widest mb-4 block text-xs md:text-base"
             data-t="hero-sub"
             >EST. 2025 // STEEL & SILICON</span
           >
           <h1
-            class="text-4xl md:text-9xl mb-4 md:mb-8 scramble-text"
+            class="text-4xl md:text-9xl mb-4 md:mb-8 scramble-text font-bold leading-tight"
             data-text="TERRA FERRO"
             data-t="hero-title"
           >
@@ -605,10 +578,10 @@
       </section>
 
       <section id="hardware">
-        <div class="w-full">
+        <div class="w-full max-w-6xl mx-auto">
           <div class="mb-10 md:mb-16">
             <h2
-              class="text-3xl md:text-8xl mb-2 md:mb-4 scramble-text"
+              class="text-3xl md:text-8xl mb-2 md:mb-4 scramble-text font-bold"
               data-text="STEEL ROOTS"
               data-t="hw-title"
             >
@@ -628,7 +601,7 @@
             >
               <div>
                 <div class="flex justify-between items-start mb-4">
-                  <h3 class="text-xl md:text-3xl" data-t="hw-card1-t">
+                  <h3 class="text-xl md:text-3xl font-bold" data-t="hw-card1-t">
                     Industrial Attachments
                   </h3>
                   <span class="status-active" data-t="status-online"
@@ -648,7 +621,7 @@
             </div>
 
             <div
-              class="bento-item glass-panel col-span-2 p-6 md:p-10 flex items-center justify-center text-center border-l-2 border-[var(--accent)]"
+              class="bento-item glass-panel col-span-2 p-6 md:p-10 flex items-center justify-center text-center border-l-2 border-[var(--accent)] min-h-[200px]"
             >
               <div>
                 <div class="text-4xl md:text-5xl font-bold text-white mb-2">
@@ -667,10 +640,10 @@
       </section>
 
       <section id="future">
-        <div class="w-full">
-          <div class="mb-10 md:mb-16 text-right">
+        <div class="w-full max-w-6xl mx-auto">
+          <div class="mb-10 md:mb-16 text-center md:text-right">
             <h2
-              class="text-3xl md:text-8xl mb-2 md:mb-4 scramble-text"
+              class="text-3xl md:text-8xl mb-2 md:mb-4 scramble-text font-bold"
               data-text="FUTURE_CORE"
               data-t="ft-title"
             >
@@ -686,29 +659,34 @@
 
           <div class="bento-grid">
             <div
-              class="bento-item glass-panel col-span-2 p-6 md:p-10 relative overflow-hidden"
+              class="bento-item glass-panel col-span-2 p-6 md:p-10 relative overflow-hidden flex flex-col justify-between min-h-[280px] md:min-h-[300px]"
             >
               <div
                 class="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-transparent via-[var(--warning)] to-transparent opacity-50"
               ></div>
-              <div class="flex justify-between items-start mb-6">
-                <h3
-                  class="text-lg md:text-2xl text-white/90"
-                  data-t="ft-card1-t"
+
+              <div>
+                <div class="flex justify-between items-start mb-6">
+                  <h3
+                    class="text-xl md:text-2xl text-white/90 font-bold"
+                    data-t="ft-card1-t"
+                  >
+                    Autonomous Fleet
+                  </h3>
+                  <span class="status-soon" data-t="status-load"
+                    >>> INITIALIZING<span class="blink-cursor">_</span></span
+                  >
+                </div>
+
+                <p
+                  class="font-mono text-[11px] md:text-xs text-[var(--it-cyan)] mb-4 opacity-80 leading-relaxed"
                 >
-                  Autonomous Fleet
-                </h3>
-                <span class="status-soon" data-t="status-load"
-                  >>> INITIALIZING<span class="blink-cursor">_</span></span
-                >
+                  > SYSTEM_CHECK: PENDING<br />
+                  > DRIVER_MODULE: REMOVING...<br />
+                  > AI_INTEGRATION: 45%
+                </p>
               </div>
-              <p
-                class="font-mono text-[10px] md:text-xs text-[var(--it-cyan)] mb-4 opacity-70"
-              >
-                > SYSTEM_CHECK: PENDING<br />
-                > DRIVER_MODULE: REMOVING...<br />
-                > AI_INTEGRATION: 45%
-              </p>
+
               <p class="text-white/40 text-xs md:text-sm" data-t="ft-card1-d">
                 Soon, our attachments will not need drivers. We are developing
                 the AI logic for fully unmanned tractors that work the fields
@@ -717,26 +695,30 @@
             </div>
 
             <div
-              class="bento-item glass-panel col-span-2 p-6 md:p-10 border-t border-[var(--it-cyan)]"
+              class="bento-item glass-panel col-span-2 p-6 md:p-10 border-t border-[var(--it-cyan)] flex flex-col justify-between min-h-[280px] md:min-h-[300px]"
             >
-              <div class="flex justify-between items-start mb-6">
-                <h3
-                  class="text-lg md:text-2xl text-white/90"
-                  data-t="ft-card2-t"
+              <div>
+                <div class="flex justify-between items-start mb-6">
+                  <h3
+                    class="text-xl md:text-2xl text-white/90 font-bold"
+                    data-t="ft-card2-t"
+                  >
+                    Anomaly Detection
+                  </h3>
+                  <span class="status-soon" data-t="status-load"
+                    >>> INITIALIZING<span class="blink-cursor">_</span></span
+                  >
+                </div>
+
+                <p
+                  class="font-mono text-[11px] md:text-xs text-[var(--it-cyan)] mb-4 opacity-80 leading-relaxed"
                 >
-                  Anomaly Detection
-                </h3>
-                <span class="status-soon" data-t="status-load"
-                  >>> INITIALIZING<span class="blink-cursor">_</span></span
-                >
+                  > DRONE_UPLINK: WAITING<br />
+                  > SOIL_DATA: ENCRYPTING<br />
+                  > PREDICTION_MODEL: TRAINING...
+                </p>
               </div>
-              <p
-                class="font-mono text-[10px] md:text-xs text-[var(--it-cyan)] mb-4 opacity-70"
-              >
-                > DRONE_UPLINK: WAITING<br />
-                > SOIL_DATA: ENCRYPTING<br />
-                > PREDICTION_MODEL: TRAINING...
-              </p>
+
               <p class="text-white/40 text-xs md:text-sm" data-t="ft-card2-d">
                 Upcoming drone services will scan for diseases and soil health,
                 feeding data directly to our anomalies detection algorithm.
@@ -802,14 +784,11 @@
     </footer>
 
     <script>
-      // --- SPAM KORUMASI ---
       function protectContact() {
         const email = atob("dGVycmFmZXJyb3RlY2hAZ21haWwuY29t");
         const tel = atob("KzM1NSA3NSAyMzcgODMgODM=");
-
         const emailEl = document.getElementById("contact-email");
         const telEl = document.getElementById("contact-tel");
-
         if (emailEl) {
           emailEl.href = "mailto:" + email;
           emailEl.innerText = email;
@@ -819,10 +798,8 @@
           telEl.innerText = tel;
         }
       }
-
       window.addEventListener("load", protectContact);
 
-      // --- TRANSLATION DATA ---
       const translations = {
         en: {
           "nav-home": "Biosphere",
@@ -928,7 +905,6 @@
         refreshScrambles();
       }
 
-      // --- TEXT SCRAMBLE ---
       class TextScramble {
         constructor(el) {
           this.el = el;
@@ -988,7 +964,6 @@
         });
       }
 
-      // --- THREE.JS SCENE - Optimized for Mobile ---
       let scene, camera, renderer, crystal;
       function initThree() {
         scene = new THREE.Scene();
@@ -998,7 +973,6 @@
           0.1,
           1000,
         );
-
         renderer = new THREE.WebGLRenderer({
           antialias: false,
           alpha: true,
@@ -1018,17 +992,13 @@
           opacity: 0.2,
         });
         crystal = new THREE.Mesh(geometry, material);
-
-        // Mobilde kristali biraz küçült
         if (window.innerWidth < 768) {
-          crystal.scale.set(0.6, 0.6, 0.6);
+          crystal.scale.set(0.65, 0.65, 0.65);
         }
-
         scene.add(crystal);
         camera.position.z = 10;
         animateThree();
       }
-
       function animateThree() {
         requestAnimationFrame(animateThree);
         crystal.rotation.y += 0.002;
@@ -1036,12 +1006,9 @@
         renderer.render(scene, camera);
       }
 
-      // --- GSAP & INTERACTION ---
       window.addEventListener("DOMContentLoaded", () => {
         initThree();
         gsap.registerPlugin(ScrollTrigger, ScrollToPlugin);
-
-        // Custom Cursor sadece PC'de çalışsın (mobil dokunmatikte sorun olmasın)
         if (window.matchMedia("(pointer: fine)").matches) {
           const cursor = document.getElementById("custom-cursor");
           const follower = document.getElementById("cursor-follower");
@@ -1051,26 +1018,21 @@
             cursorY = 0;
           let followerX = 0,
             followerY = 0;
-
           window.addEventListener("mousemove", (e) => {
             mouseX = e.clientX;
             mouseY = e.clientY;
           });
-
           function updateCursor() {
             cursorX = mouseX;
             cursorY = mouseY;
             followerX += (mouseX - followerX) * 0.15;
             followerY += (mouseY - followerY) * 0.15;
-
             cursor.style.transform = `translate(${cursorX}px, ${cursorY}px)`;
             follower.style.transform = `translate(${followerX - 17}px, ${followerY - 17}px)`;
-
             requestAnimationFrame(updateCursor);
           }
           updateCursor();
         }
-
         document.querySelectorAll('a[href^="#"]').forEach((anchor) => {
           anchor.addEventListener("click", function (e) {
             e.preventDefault();
@@ -1085,7 +1047,6 @@
             }
           });
         });
-
         const headers = document.querySelectorAll(".scramble-text");
         headers.forEach((h) => {
           h.style.visibility = "visible";
@@ -1096,8 +1057,6 @@
             onEnter: () => fx.setText(h.getAttribute("data-text")),
           });
         });
-
-        // Scroll Bar Animasyon
         gsap.to("#scroll-bar", {
           height: "100%",
           scrollTrigger: {
@@ -1107,8 +1066,6 @@
             scrub: true,
           },
         });
-
-        // Camera Shift
         gsap.to(camera.position, {
           z: 15,
           y: -5,
@@ -1119,8 +1076,6 @@
             scrub: 1,
           },
         });
-
-        // Section Theme Swapping
         ScrollTrigger.create({
           trigger: "#future",
           start: "top center",
@@ -1146,7 +1101,6 @@
             document.documentElement.style.setProperty("--accent", "#00FF87");
           },
         });
-
         gsap.to("#main-footer", {
           opacity: 1,
           y: 0,
@@ -1159,7 +1113,6 @@
             toggleActions: "play none none reverse",
           },
         });
-
         gsap.to(".footer-item", {
           opacity: 1,
           y: 0,
@@ -1181,16 +1134,13 @@
           camera.aspect = window.innerWidth / window.innerHeight;
           camera.updateProjectionMatrix();
           renderer.setSize(window.innerWidth, window.innerHeight);
-
-          // Resize olunca kristal boyutunu tekrar kontrol et ettin mi aslinim benim bende ediyorum bka
           if (window.innerWidth < 768) {
-            crystal.scale.set(0.6, 0.6, 0.6);
+            crystal.scale.set(0.65, 0.65, 0.65);
           } else {
             crystal.scale.set(1, 1, 1);
           }
         }, 100);
       });
-
       window.addEventListener("load", () => {
         const preloader = document.getElementById("preloader");
         setTimeout(() => {
