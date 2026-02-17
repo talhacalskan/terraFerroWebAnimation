@@ -288,24 +288,30 @@
       .bento-grid {
         display: grid;
         grid-template-columns: 1fr;
-        gap: 20px;
+        gap: 16px;
         width: 100%;
       }
-      @media (min-width: 768px) {
+
+      @media (min-width: 640px) {
         .bento-grid {
           grid-template-columns: repeat(2, 1fr);
+          gap: 18px;
         }
       }
+
       @media (min-width: 1024px) {
         .bento-grid {
           grid-template-columns: repeat(4, 1fr);
+          gap: 20px;
         }
       }
+
       .col-span-2,
       .col-span-4 {
         grid-column: span 1;
       }
-      @media (min-width: 768px) {
+
+      @media (min-width: 640px) {
         .col-span-2 {
           grid-column: span 2;
         }
@@ -313,9 +319,30 @@
           grid-column: span 2;
         }
       }
+
       @media (min-width: 1024px) {
+        .col-span-2 {
+          grid-column: span 2;
+        }
         .col-span-4 {
           grid-column: span 4;
+        }
+      }
+
+      /* Bento Items Responsive Padding */
+      .bento-item {
+        padding: 16px !important;
+      }
+
+      @media (min-width: 768px) {
+        .bento-item {
+          padding: 24px !important;
+        }
+      }
+
+      @media (min-width: 1024px) {
+        .bento-item {
+          padding: 40px !important;
         }
       }
 
@@ -659,7 +686,7 @@
 
           <div class="bento-grid">
             <div
-              class="bento-item glass-panel col-span-2 p-6 md:p-10 relative overflow-hidden flex flex-col justify-between min-h-[280px] md:min-h-[300px]"
+              class="bento-item glass-panel col-span-2 relative overflow-hidden flex flex-col justify-between min-h-[240px] sm:min-h-[260px] md:min-h-[300px]"
             >
               <div
                 class="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-transparent via-[var(--warning)] to-transparent opacity-50"
@@ -695,7 +722,7 @@
             </div>
 
             <div
-              class="bento-item glass-panel col-span-2 p-6 md:p-10 border-t border-[var(--it-cyan)] flex flex-col justify-between min-h-[280px] md:min-h-[300px]"
+              class="bento-item glass-panel col-span-2 border-t border-[var(--it-cyan)] flex flex-col justify-between min-h-[240px] sm:min-h-[260px] md:min-h-[300px]"
             >
               <div>
                 <div class="flex justify-between items-start mb-6">
@@ -726,7 +753,7 @@
             </div>
 
             <div
-              class="bento-item glass-panel col-span-4 p-6 flex justify-between items-center bg-white/5"
+              class="bento-item glass-panel col-span-4 flex flex-col sm:flex-row justify-between items-center gap-4 bg-white/5"
             >
               <span
                 class="font-mono text-[10px] md:text-xs text-white/30"
