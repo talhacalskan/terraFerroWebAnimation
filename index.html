@@ -3,25 +3,21 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>TerraFerroTech | Agri-Silicon Convergence</title>
-    <!-- Fonts -->
+    <title>TerraFerroTech | Steel & Silicon</title>
     <link
       href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;500;700&family=Inter:wght@300;400;600&display=swap"
       rel="stylesheet"
     />
-    <!-- Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
-    <!-- GSAP for Animations -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/ScrollTrigger.min.js"></script>
-    <!-- Three.js for 3D -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
     <style>
       :root {
         --obsidian: #080808;
         --accent: #00ff87; /* Agri Green */
         --it-cyan: #00f5ff;
-        --rd-purple: #b026ff;
+        --warning: #ffb700; /* For 'Soon' status */
         --text-main: #ffffff;
         --glass: rgba(255, 255, 255, 0.02);
         --glass-border: rgba(255, 255, 255, 0.08);
@@ -49,7 +45,7 @@
         font-weight: 700;
       }
 
-      /* Custom Cursor */
+      /* Custom Cursor - Optimized */
       #custom-cursor {
         position: fixed;
         width: 10px;
@@ -58,7 +54,7 @@
         border-radius: 50%;
         pointer-events: none;
         z-index: 10000;
-        transition: transform 0.1s ease-out;
+        will-change: transform;
         mix-blend-mode: difference;
       }
 
@@ -70,9 +66,8 @@
         border-radius: 50%;
         pointer-events: none;
         z-index: 9999;
-        transition:
-          transform 0.2s ease-out,
-          border-color 0.3s ease;
+        will-change: transform;
+        transition: border-color 0.3s ease;
       }
 
       /* Glassmorphism */
@@ -159,6 +154,65 @@
         box-shadow: 0 0 30px var(--accent);
       }
 
+      /* === PRELOADER STYLES === */
+      #preloader {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100vh;
+        background-color: var(--obsidian);
+        z-index: 99999;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        transition:
+          opacity 0.8s ease-in-out,
+          visibility 0.8s ease-in-out;
+      }
+
+      /* Preloader kapandığında uygulanacak sınıf */
+      #preloader.loaded {
+        opacity: 0;
+        visibility: hidden;
+        pointer-events: none;
+      }
+
+      .loader-container {
+        position: relative;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+      }
+
+      .loading-text {
+        font-family: "Space Grotesk", sans-serif;
+        color: var(--accent);
+        font-size: 18px;
+        letter-spacing: 4px;
+        font-weight: 700;
+      }
+
+      .loading-spinner {
+        width: 50px;
+        height: 50px;
+        border: 3px solid rgba(0, 255, 135, 0.1);
+        border-top: 3px solid var(--accent);
+        border-radius: 50%;
+        animation: spin 1s linear infinite;
+        margin-bottom: 20px;
+      }
+
+      @keyframes spin {
+        0% {
+          transform: rotate(0deg);
+        }
+        100% {
+          transform: rotate(360deg);
+        }
+      }
+
       /* Bento Grid */
       .bento-grid {
         display: grid;
@@ -170,6 +224,190 @@
 
       .scramble-text {
         visibility: hidden;
+      }
+
+      /* TECH for Hero - Below title */
+      .tech-subtitle {
+        display: block;
+        font-size: 4rem;
+        color: var(--accent);
+        opacity: 0;
+        animation: techSubtitleTyping 1.5s ease-out 2.5s forwards;
+        letter-spacing: 0.2em;
+        text-shadow:
+          0 0 30px var(--accent),
+          0 0 60px var(--accent),
+          0 0 90px rgba(0, 255, 135, 0.5);
+        position: relative;
+        font-family: "Space Grotesk", sans-serif;
+        font-weight: 700;
+        margin-top: -1rem;
+        margin-bottom: 2rem;
+      }
+
+      .tech-subtitle::after {
+        content: "_";
+        position: relative;
+        margin-left: 0.1em;
+        animation: techCursorBlink 0.9s step-end infinite;
+      }
+
+      @keyframes techSubtitleTyping {
+        0% {
+          opacity: 0;
+          transform: translateX(-30px);
+          letter-spacing: -0.3em;
+        }
+        40% {
+          letter-spacing: 0.35em;
+        }
+        100% {
+          opacity: 1;
+          transform: translateX(0);
+          letter-spacing: 0.2em;
+        }
+      }
+
+      @keyframes techCursorBlink {
+        0%,
+        100% {
+          opacity: 1;
+        }
+        50% {
+          opacity: 0;
+        }
+      }
+
+      @media (max-width: 768px) {
+        .tech-subtitle {
+          font-size: 2.5rem;
+        }
+      }
+
+      /* TECH Typing Animation */
+      .tech-wrapper {
+        display: inline-block;
+        margin-left: 0.3em;
+      }
+
+      .tech-text {
+        display: inline-block;
+        font-size: 0.5em;
+        color: var(--accent);
+        opacity: 0;
+        animation: techFadeIn 0.8s ease-out 1.5s forwards;
+        letter-spacing: 0.1em;
+        text-shadow:
+          0 0 20px var(--accent),
+          0 0 40px var(--accent);
+        position: relative;
+      }
+
+      /* TECH for Hero - Larger and more prominent */
+      .tech-text-hero {
+        display: inline-block;
+        font-size: 0.45em;
+        color: var(--accent);
+        opacity: 0;
+        animation: techFadeInHero 1.2s ease-out 2s forwards;
+        letter-spacing: 0.15em;
+        text-shadow:
+          0 0 30px var(--accent),
+          0 0 60px var(--accent),
+          0 0 90px rgba(0, 255, 135, 0.5);
+        position: relative;
+        font-weight: 700;
+        vertical-align: middle;
+      }
+
+      .tech-text::after,
+      .tech-text-hero::after {
+        content: "";
+        position: absolute;
+        right: -0.5em;
+        top: 0;
+        width: 2px;
+        height: 100%;
+        background: var(--accent);
+        animation: techBlink 0.8s step-end infinite;
+      }
+
+      @keyframes techFadeInHero {
+        0% {
+          opacity: 0;
+          transform: translateX(-20px) scale(0.8);
+          letter-spacing: -0.5em;
+        }
+        50% {
+          letter-spacing: 0.4em;
+        }
+        100% {
+          opacity: 1;
+          transform: translateX(0) scale(1);
+          letter-spacing: 0.15em;
+        }
+      }
+
+      @keyframes techFadeIn {
+        0% {
+          opacity: 0;
+          transform: translateX(-10px);
+          letter-spacing: -0.5em;
+        }
+        50% {
+          letter-spacing: 0.3em;
+        }
+        100% {
+          opacity: 1;
+          transform: translateX(0);
+          letter-spacing: 0.1em;
+        }
+      }
+
+      @keyframes techBlink {
+        0%,
+        100% {
+          opacity: 1;
+        }
+        50% {
+          opacity: 0;
+        }
+      }
+
+      /* TERMINAL ANIMATION FOR "SOON" */
+      .blink-cursor {
+        animation: blink 1s step-end infinite;
+      }
+      @keyframes blink {
+        0%,
+        100% {
+          opacity: 1;
+        }
+        50% {
+          opacity: 0;
+        }
+      }
+
+      .status-soon {
+        color: var(--warning);
+        font-family: monospace;
+        font-size: 0.8rem;
+        letter-spacing: 1px;
+        background: rgba(255, 183, 0, 0.1);
+        padding: 4px 8px;
+        border-radius: 4px;
+        border: 1px solid rgba(255, 183, 0, 0.3);
+      }
+
+      .status-active {
+        color: var(--accent);
+        font-family: monospace;
+        font-size: 0.8rem;
+        letter-spacing: 1px;
+        background: rgba(0, 255, 135, 0.1);
+        padding: 4px 8px;
+        border-radius: 4px;
+        border: 1px solid rgba(0, 255, 135, 0.3);
       }
 
       ::-webkit-scrollbar {
@@ -184,6 +422,12 @@
     </style>
   </head>
   <body>
+    <div id="preloader">
+      <div class="loader-container">
+        <div class="loading-spinner"></div>
+        <div class="loading-text">TERRA FERRO</div>
+      </div>
+    </div>
     <div id="custom-cursor"></div>
     <div id="cursor-follower"></div>
 
@@ -192,9 +436,13 @@
     >
       <div class="text-2xl font-bold tracking-tighter flex items-center gap-2">
         <span class="text-[var(--accent)]">TERRA</span>FERRO<span
-          class="opacity-40"
-          >.</span
-        >
+          class="tech-wrapper"
+          ><span
+            class="tech-text"
+            style="animation-delay: 0.3s; font-size: 0.7em"
+            >TECH</span
+          ></span
+        ><span class="opacity-40">.</span>
       </div>
 
       <div class="flex gap-4 text-xs font-mono">
@@ -223,16 +471,16 @@
           >Biosphere</a
         >
         <a
-          href="#agri"
+          href="#hardware"
           class="hover:text-[var(--accent)] transition-colors"
-          data-t="nav-agri"
-          >AgriTech</a
+          data-t="nav-hw"
+          >Hardware</a
         >
         <a
-          href="#it"
+          href="#future"
           class="hover:text-[var(--it-cyan)] transition-colors"
-          data-t="nav-it"
-          >Silicon Field</a
+          data-t="nav-ft"
+          >Future_Protocol</a
         >
       </div>
     </nav>
@@ -244,13 +492,12 @@
     <div id="canvas-container"></div>
 
     <main class="relative z-10">
-      <!-- Hero Section -->
       <section id="hero">
         <div class="max-w-4xl">
           <span
             class="text-[var(--accent)] font-mono tracking-widest mb-4 block"
             data-t="hero-sub"
-            >EST. 2025 // HYBRID SYSTEMS</span
+            >EST. 2025 // STEEL & SILICON</span
           >
           <h1
             class="text-6xl md:text-9xl mb-8 scramble-text"
@@ -259,34 +506,41 @@
           >
             TERRA FERRO
           </h1>
+          <div class="tech-subtitle">TECH</div>
+          <p
+            class="text-lg md:text-xl text-[var(--accent)] font-mono mb-4 tracking-wide"
+            data-t="hero-tagline"
+          >
+            Forging the Present, Coding the Future
+          </p>
           <p
             class="text-xl md:text-2xl text-white/50 mb-12 max-w-2xl leading-relaxed"
             data-t="hero-desc"
           >
-            Synthesizing fertile earth with intelligent silicon. We are
-            engineering the future of sustainable autonomy.
+            We supply the industry's most durable agricultural attachments
+            today, while engineering the autonomous drones and data swarms of
+            tomorrow.
           </p>
           <div class="flex gap-6">
-            <a href="#agri" class="magnetic-btn" data-t="hero-btn"
-              >Initialize</a
+            <a href="#hardware" class="magnetic-btn" data-t="hero-btn"
+              >Explore Hardware</a
             >
           </div>
         </div>
       </section>
 
-      <!-- AgriTech Section -->
-      <section id="agri">
+      <section id="hardware">
         <div class="w-full">
           <div class="mb-16">
             <h2
               class="text-5xl md:text-8xl mb-4 scramble-text"
-              data-text="AGRI-GENESIS"
-              data-t="agri-title"
+              data-text="STEEL ROOTS"
+              data-t="hw-title"
             >
-              AGRI-GENESIS
+              STEEL ROOTS
             </h2>
-            <p class="text-[var(--accent)] font-mono" data-t="agri-sub">
-              SYSTEMS FOR THE FERTILE GRID
+            <p class="text-[var(--accent)] font-mono" data-t="hw-sub">
+              CURRENT OPERATIONS // ACTIVE
             </p>
           </div>
 
@@ -294,85 +548,123 @@
             <div
               class="bento-item glass-panel col-span-2 p-10 flex flex-col justify-between min-h-[300px]"
             >
-              <h3 class="text-3xl" data-t="agri-card1-t">Precision Yield</h3>
-              <p class="opacity-40" data-t="agri-card1-d">
-                AI-driven soil analysis maximizing output with minimal resource
-                footprint.
-              </p>
+              <div>
+                <div class="flex justify-between items-start mb-4">
+                  <h3 class="text-3xl" data-t="hw-card1-t">
+                    Industrial Attachments
+                  </h3>
+                  <span class="status-active" data-t="status-online"
+                    >● ONLINE</span
+                  >
+                </div>
+                <p class="opacity-40" data-t="hw-card1-d">
+                  We currently manufacture and supply high-tensile steel plows,
+                  seeders, and harvesters. Engineered to endure the toughest
+                  soil conditions on the planet.
+                </p>
+              </div>
               <div class="mt-8 flex gap-2">
                 <div class="h-1 w-20 bg-[var(--accent)]"></div>
                 <div class="h-1 w-10 bg-white/10"></div>
               </div>
             </div>
+
             <div
-              class="bento-item glass-panel p-10 flex flex-col items-center justify-center text-center"
+              class="bento-item glass-panel col-span-2 p-10 flex items-center justify-center text-center border-l-2 border-[var(--accent)]"
             >
-              <div class="text-5xl font-bold text-[var(--accent)]">94%</div>
-              <p
-                class="text-[10px] mt-2 opacity-30 tracking-widest uppercase"
-                data-t="agri-stat"
-              >
-                Water Efficiency
-              </p>
-            </div>
-            <div class="bento-item glass-panel p-10">
-              <h3 class="text-xl mb-4" data-t="agri-card2-t">Eco-Mesh</h3>
-              <div class="space-y-2">
-                <div class="h-2 bg-white/5 rounded w-full"></div>
-                <div class="h-2 bg-white/5 rounded w-3/4"></div>
+              <div>
+                <div class="text-5xl font-bold text-white mb-2">100%</div>
+                <p
+                  class="text-xs tracking-[0.2em] text-[var(--accent)] uppercase"
+                  data-t="hw-stat"
+                >
+                  Mechanical Durability
+                </p>
               </div>
-            </div>
-            <div
-              class="bento-item glass-panel col-span-4 p-8 flex items-center justify-between"
-            >
-              <div data-t="agri-footer">
-                Real-time biometrics for large scale cultivation.
-              </div>
-              <div class="text-[var(--accent)]">>> ACTIVE_STREAM</div>
             </div>
           </div>
         </div>
       </section>
 
-      <!-- IT Infrastructure Section -->
-      <section id="it">
+      <section id="future">
         <div class="w-full">
           <div class="mb-16 text-right">
             <h2
               class="text-5xl md:text-8xl mb-4 scramble-text"
-              data-text="SILICON FIELD"
-              data-t="it-title"
+              data-text="FUTURE_CORE"
+              data-t="ft-title"
             >
-              SILICON FIELD
+              FUTURE_CORE
             </h2>
-            <p class="text-[var(--it-cyan)] font-mono" data-t="it-sub">
-              0x01 // DATA ARCHITECTURE
+            <p class="text-[var(--it-cyan)] font-mono" data-t="ft-sub">
+              R&D LABORATORY // LOADING...
             </p>
           </div>
 
           <div class="bento-grid">
             <div
-              class="bento-item glass-panel col-span-1 p-10 border-t-2 border-[var(--it-cyan)]"
+              class="bento-item glass-panel col-span-2 p-10 relative overflow-hidden"
             >
-              <h3 class="text-xl mb-6" data-t="it-card1-t">Edge Nodes</h3>
               <div
-                class="bg-black/40 p-4 font-mono text-[10px] text-[var(--it-cyan)] opacity-60"
-              >
-                RUN :: AGRI_PULSE<br />
-                STATUS :: SECURE<br />
-                UPLINK :: 10.0.4.1
+                class="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-transparent via-[var(--warning)] to-transparent opacity-50"
+              ></div>
+              <div class="flex justify-between items-start mb-6">
+                <h3 class="text-2xl text-white/90" data-t="ft-card1-t">
+                  Autonomous Fleet
+                </h3>
+                <span class="status-soon" data-t="status-load"
+                  >>> INITIALIZING<span class="blink-cursor">_</span></span
+                >
               </div>
-            </div>
-            <div
-              class="bento-item glass-panel col-span-3 p-10 flex flex-col justify-end min-h-[400px]"
-            >
-              <div class="mb-auto text-8xl font-black opacity-5">TECH</div>
-              <h3 class="text-4xl mb-4" data-t="it-card2-t">The Neural Soil</h3>
-              <p class="text-white/40 max-w-xl" data-t="it-card2-d">
-                Our IT department manages distributed server clusters designed
-                for rural deployment, bringing low-latency intelligence to the
-                edge of the wild.
+              <p
+                class="font-mono text-xs text-[var(--it-cyan)] mb-4 opacity-70"
+              >
+                > SYSTEM_CHECK: PENDING<br />
+                > DRIVER_MODULE: REMOVING...<br />
+                > AI_INTEGRATION: 45%
               </p>
+              <p class="text-white/40 text-sm" data-t="ft-card1-d">
+                Soon, our attachments will not need drivers. We are developing
+                the AI logic for fully unmanned tractors that work the fields
+                24/7.
+              </p>
+            </div>
+
+            <div
+              class="bento-item glass-panel col-span-2 p-10 border-t border-[var(--it-cyan)]"
+            >
+              <div class="flex justify-between items-start mb-6">
+                <h3 class="text-2xl text-white/90" data-t="ft-card2-t">
+                  Anomaly Detection
+                </h3>
+                <span class="status-soon" data-t="status-load"
+                  >>> INITIALIZING<span class="blink-cursor">_</span></span
+                >
+              </div>
+              <p
+                class="font-mono text-xs text-[var(--it-cyan)] mb-4 opacity-70"
+              >
+                > DRONE_UPLINK: WAITING<br />
+                > SOIL_DATA: ENCRYPTING<br />
+                > PREDICTION_MODEL: TRAINING...
+              </p>
+              <p class="text-white/40 text-sm" data-t="ft-card2-d">
+                Upcoming drone services will scan for diseases and soil health,
+                feeding data directly to our anomalies detection algorithm.
+              </p>
+            </div>
+
+            <div
+              class="bento-item glass-panel col-span-4 p-6 flex justify-between items-center bg-white/5"
+            >
+              <span class="font-mono text-xs text-white/30" data-t="ft-footer"
+                >Transitioning from Hardware to Intelligence.</span
+              >
+              <div class="h-2 w-32 bg-gray-800 rounded-full overflow-hidden">
+                <div
+                  class="h-full bg-[var(--it-cyan)] w-[60%] animate-pulse"
+                ></div>
+              </div>
             </div>
           </div>
         </div>
@@ -386,7 +678,7 @@
         TERRAFERRO<span class="text-[var(--accent)]">TECH</span>.
       </div>
       <p class="opacity-30 text-[10px] tracking-widest uppercase">
-        Global Operations / 2025 Hybrid Future Systems
+        Global Operations / Hardware & Software Roadmap
       </p>
     </footer>
 
@@ -395,76 +687,93 @@
       const translations = {
         en: {
           "nav-home": "Biosphere",
-          "nav-agri": "AgriTech",
-          "nav-it": "Silicon Field",
-          "hero-sub": "EST. 2025 // HYBRID SYSTEMS",
+          "nav-hw": "Hardware",
+          "nav-ft": "Future_Protocol",
+          "hero-sub": "EST. 2025 // STEEL & SILICON",
           "hero-title": "TERRA FERRO",
+          "hero-tagline": "Forging the Present, Coding the Future",
           "hero-desc":
-            "Synthesizing fertile earth with intelligent silicon. We are engineering the future of sustainable autonomy.",
-          "hero-btn": "Initialize",
-          "agri-title": "AGRI-GENESIS",
-          "agri-sub": "SYSTEMS FOR THE FERTILE GRID",
-          "agri-card1-t": "Precision Yield",
-          "agri-card1-d":
-            "AI-driven soil analysis maximizing output with minimal resource footprint.",
-          "agri-stat": "Water Efficiency",
-          "agri-card2-t": "Eco-Mesh",
-          "agri-footer": "Real-time biometrics for large scale cultivation.",
-          "it-title": "SILICON FIELD",
-          "it-sub": "0x01 // DATA ARCHITECTURE",
-          "it-card1-t": "Edge Nodes",
-          "it-card2-t": "The Neural Soil",
-          "it-card2-d":
-            "Our IT department manages distributed server clusters designed for rural deployment, bringing low-latency intelligence to the edge of the wild.",
+            "We supply the industry's most durable agricultural attachments today, while engineering the autonomous drones and data swarms of tomorrow.",
+          "hero-btn": "Explore Hardware",
+
+          "hw-title": "STEEL ROOTS",
+          "hw-sub": "CURRENT OPERATIONS // ACTIVE",
+          "hw-card1-t": "Industrial Attachments",
+          "status-online": "● ONLINE",
+          "hw-card1-d":
+            "We currently manufacture and supply high-tensile steel plows, seeders, and harvesters. Engineered to endure the toughest soil conditions on the planet.",
+          "hw-stat": "Mechanical Durability",
+
+          "ft-title": "FUTURE_CORE",
+          "ft-sub": "R&D LABORATORY // LOADING...",
+          "ft-card1-t": "Autonomous Fleet",
+          "status-load": ">> INITIALIZING<span class='blink-cursor'>_</span>",
+          "ft-card1-d":
+            "Soon, our attachments will not need drivers. We are developing the AI logic for fully unmanned tractors that work the fields 24/7.",
+          "ft-card2-t": "Anomaly Detection",
+          "ft-card2-d":
+            "Upcoming drone services will scan for diseases and soil health, feeding data directly to our anomalies detection algorithm.",
+          "ft-footer": "Transitioning from Hardware to Intelligence.",
         },
         sq: {
           "nav-home": "Biosfera",
-          "nav-agri": "AgriTech",
-          "nav-it": "Fusha e Silikonit",
-          "hero-sub": "EST. 2025 // SISTEMET HIBRIDE",
+          "nav-hw": "Hardueri",
+          "nav-ft": "Protokolli_Ardhshëm",
+          "hero-sub": "EST. 2025 // ÇELIK & SILIKON",
           "hero-title": "TERRA FERRO",
+          "hero-tagline": "Farkëtimi i të Tashmes, Kodimi i së Ardhmes",
           "hero-desc":
-            "Sintezimi i tokës pjellore me silikon inteligjent. Ne po inxhinierojmë të ardhmen e autonomisë së qëndrueshme.",
-          "hero-btn": "Inicializo",
-          "agri-title": "AGRI-GENEZA",
-          "agri-sub": "SISTEMET PËR RRJETIN PJELLOR",
-          "agri-card1-t": "Rendimenti i Saktë",
-          "agri-card1-d":
-            "Analiza e tokës e drejtuar nga AI duke maksimizuar prodhimin me gjurmë minimale burimesh.",
-          "agri-stat": "Efikasiteti i Ujit",
-          "agri-card2-t": "Eko-Rrjeta",
-          "agri-footer":
-            "Biometria në kohë reale për kultivim në shkallë të gjerë.",
-          "it-title": "FUSHA E SILIKONIT",
-          "it-sub": "0x01 // ARKITEKTURA E TË DHËNAVE",
-          "it-card1-t": "Nyjet Skajore",
-          "it-card2-t": "Toka Neurale",
-          "it-card2-d":
-            "Departamenti ynë i TI menaxhon klastrat e shpërndara të serverëve të krijuar për vendosje rurale, duke sjellë inteligjencë me vonesë të ulët në skajet e natyrës.",
+            "Ne furnizojmë sot bashkëngjitjet bujqësore më të qëndrueshme të industrisë, ndërkohë që inxhinierojmë dronët autonomë dhe tufat e të dhënave të së nesërmes.",
+          "hero-btn": "Eksploro Harduerin",
+
+          "hw-title": "RRËNJËT E ÇELIKUT",
+          "hw-sub": "OPERACIONET AKTUALE // AKTIV",
+          "hw-card1-t": "Bashkëngjitje Industriale",
+          "status-online": "● NË LINJË",
+          "hw-card1-d":
+            "Aktualisht prodhojmë dhe furnizojmë plugje çeliku me tërheqje të lartë, mbjellëse dhe korrëse. Inxhinieruar për të përballuar kushtet më të vështira të tokës.",
+          "hw-stat": "Qëndrueshmëria Mekanike",
+
+          "ft-title": "BËRTHAMA E ARDHSHME",
+          "ft-sub": "LABORATORI R&D // DUKE U NGARKUAR...",
+          "ft-card1-t": "Flota Autonome",
+          "status-load": ">> DUKE NISUR<span class='blink-cursor'>_</span>",
+          "ft-card1-d":
+            "Së shpejti, pajisjet tona nuk do të kenë nevojë për shoferë. Ne po zhvillojmë logjikën e AI për traktorë plotësisht pa pilot.",
+          "ft-card2-t": "Zbulimi i Anomalive",
+          "ft-card2-d":
+            "Shërbimet e ardhshme të dronëve do të skanojnë për sëmundje dhe shëndetin e tokës, duke ushqyer të dhëna direkt në algoritmin tonë.",
+          "ft-footer": "Tranzicioni nga Hardueri tek Inteligjenca.",
         },
         tr: {
           "nav-home": "Biyosfer",
-          "nav-agri": "AgriTech",
-          "nav-it": "Silikon Sahası",
-          "hero-sub": "EST. 2025 // HİBRİT SİSTEMLER",
+          "nav-hw": "Donanım",
+          "nav-ft": "Gelecek_Protokolü",
+          "hero-sub": "EST. 2025 // ÇELİK & SİLİKON",
           "hero-title": "TERRA FERRO",
+          "hero-tagline": "Bugünü Dövüyoruz, Geleceği Kodluyoruz",
           "hero-desc":
-            "Bereketli toprakları akıllı silikonla sentezliyoruz. Sürdürülebilir özerkliğin geleceğini inşa ediyoruz.",
-          "hero-btn": "Başlat",
-          "agri-title": "AGRİ-GENESİS",
-          "agri-sub": "BEREKETLİ ŞEBEKE İÇİN SİSTEMLER",
-          "agri-card1-t": "Hassas Verim",
-          "agri-card1-d":
-            "Yapay zeka destekli toprak analizi ile minimum kaynakla maksimum verim.",
-          "agri-stat": "Su Tasarrufu",
-          "agri-card2-t": "Eko-Ağ",
-          "agri-footer": "Geniş ölçekli tarım için gerçek zamanlı biyometri.",
-          "it-title": "SİLİKON SAHASI",
-          "it-sub": "0x01 // VERİ MİMARİSİ",
-          "it-card1-t": "Uç Düğümler",
-          "it-card2-t": "Nöral Toprak",
-          "it-card2-d":
-            "Bilişim departmanımız, kırsal alanlar için tasarlanmış dağıtık sunucu kümelerini yöneterek vahşi doğanın sınırlarına düşük gecikmeli zeka getiriyor.",
+            "Bugün endüstrinin en dayanıklı tarım ataçmanlarını sağlarken, yarının otonom dronlarını ve veri sürülerini tasarlıyoruz.",
+          "hero-btn": "Donanımı Keşfet",
+
+          "hw-title": "ÇELİK KÖKLER",
+          "hw-sub": "MEVCUT OPERASYONLAR // AKTİF",
+          "hw-card1-t": "Endüstriyel Ataçmanlar",
+          "status-online": "● ÇEVRİMİÇİ",
+          "hw-card1-d":
+            "Şu anda yüksek mukavemetli çelik pulluklar, ekim makineleri ve hasat makineleri üretiyor ve tedarik ediyoruz. Gezegenin en zorlu toprak koşullarına dayanacak şekilde tasarlandı.",
+          "hw-stat": "Mekanik Dayanıklılık",
+
+          "ft-title": "GELECEK ÇEKİRDEĞİ",
+          "ft-sub": "AR-GE LABORATUVARI // YÜKLENİYOR...",
+          "ft-card1-t": "Otonom Filo",
+          "status-load": ">> BAŞLATILIYOR<span class='blink-cursor'>_</span>",
+          "ft-card1-d":
+            "Yakında ataçmanlarımız sürücüye ihtiyaç duymayacak. Tarlaları 7/24 işleyen tamamen insansız traktörler için yapay zeka mantığını geliştiriyoruz.",
+          "ft-card2-t": "Anomali Tespiti",
+          "ft-card2-d":
+            "Gelecek drone hizmetlerimiz, hastalıkları ve toprak sağlığını tarayarak verileri doğrudan anomali tespit algoritmamıza aktaracak.",
+          "ft-footer": "Donanımdan Zekaya Geçiş.",
         },
       };
 
@@ -479,13 +788,11 @@
           if (translations[lang][key]) {
             if (el.classList.contains("scramble-text")) {
               el.setAttribute("data-text", translations[lang][key]);
-              // Trigger re-scramble if needed
             } else {
-              el.innerText = translations[lang][key];
+              el.innerHTML = translations[lang][key]; // innerHTML allows formatting like <span>
             }
           }
         });
-        // Re-trigger header animations for new text
         refreshScrambles();
       }
 
@@ -549,7 +856,7 @@
         });
       }
 
-      // --- THREE.JS SCENE ---
+      // --- THREE.JS SCENE - Optimized ---
       let scene, camera, renderer, crystal;
       function initThree() {
         scene = new THREE.Scene();
@@ -559,15 +866,21 @@
           0.1,
           1000,
         );
-        renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true });
+        renderer = new THREE.WebGLRenderer({
+          antialias: false, // Antialiasing kapatıldı - performans için
+          alpha: true,
+          powerPreference: "high-performance",
+        });
+        renderer.setPixelRatio(Math.min(window.devicePixelRatio, 1.5)); // Pixel ratio sınırlandı
         renderer.setSize(window.innerWidth, window.innerHeight);
         document
           .getElementById("canvas-container")
           .appendChild(renderer.domElement);
 
-        // Geo-Crystal (The Hybrid Core)
+        // Geo-Crystal (The Hybrid Core) - Basitleştirildi
         const geometry = new THREE.OctahedronGeometry(3, 0);
-        const material = new THREE.MeshPhongMaterial({
+        const material = new THREE.MeshBasicMaterial({
+          // Phong yerine Basic - daha hızlı
           color: 0x00ff87,
           wireframe: true,
           transparent: true,
@@ -576,19 +889,14 @@
         crystal = new THREE.Mesh(geometry, material);
         scene.add(crystal);
 
-        const light = new THREE.PointLight(0x00ff87, 1, 100);
-        light.position.set(10, 10, 10);
-        scene.add(light);
-        scene.add(new THREE.AmbientLight(0x404040));
-
         camera.position.z = 10;
         animateThree();
       }
 
       function animateThree() {
         requestAnimationFrame(animateThree);
-        crystal.rotation.y += 0.003;
-        crystal.rotation.x += 0.001;
+        crystal.rotation.y += 0.002; // Rotasyon hızı azaltıldı
+        crystal.rotation.x += 0.0008;
         renderer.render(scene, camera);
       }
 
@@ -597,17 +905,34 @@
         initThree();
         gsap.registerPlugin(ScrollTrigger);
 
-        // Cursor
+        // Cursor - Optimized with requestAnimationFrame
         const cursor = document.getElementById("custom-cursor");
         const follower = document.getElementById("cursor-follower");
+        let mouseX = 0,
+          mouseY = 0;
+        let cursorX = 0,
+          cursorY = 0;
+        let followerX = 0,
+          followerY = 0;
+
         window.addEventListener("mousemove", (e) => {
-          gsap.to(cursor, { x: e.clientX, y: e.clientY, duration: 0 });
-          gsap.to(follower, {
-            x: e.clientX - 12,
-            y: e.clientY - 12,
-            duration: 0.15,
-          });
+          mouseX = e.clientX;
+          mouseY = e.clientY;
         });
+
+        function updateCursor() {
+          // Smooth interpolation
+          cursorX = mouseX;
+          cursorY = mouseY;
+          followerX += (mouseX - followerX) * 0.15;
+          followerY += (mouseY - followerY) * 0.15;
+
+          cursor.style.transform = `translate(${cursorX}px, ${cursorY}px)`;
+          follower.style.transform = `translate(${followerX - 17}px, ${followerY - 17}px)`;
+
+          requestAnimationFrame(updateCursor);
+        }
+        updateCursor();
 
         // Scramble Init
         const headers = document.querySelectorAll(".scramble-text");
@@ -644,9 +969,9 @@
           },
         });
 
-        // Section Theme Swapping
+        // Section Theme Swapping (Hardware = Green, Future = Cyan)
         ScrollTrigger.create({
-          trigger: "#it",
+          trigger: "#future",
           start: "top center",
           onEnter: () => {
             gsap.to(crystal.material.color, {
@@ -672,10 +997,23 @@
         });
       });
 
+      // Resize handler - debounced for performance
+      let resizeTimeout;
       window.addEventListener("resize", () => {
-        camera.aspect = window.innerWidth / window.innerHeight;
-        camera.updateProjectionMatrix();
-        renderer.setSize(window.innerWidth, window.innerHeight);
+        clearTimeout(resizeTimeout);
+        resizeTimeout = setTimeout(() => {
+          camera.aspect = window.innerWidth / window.innerHeight;
+          camera.updateProjectionMatrix();
+          renderer.setSize(window.innerWidth, window.innerHeight);
+        }, 100);
+      });
+
+      // --- PRELOADER SCRIPT - Hızlandırıldı ---
+      window.addEventListener("load", () => {
+        const preloader = document.getElementById("preloader");
+        setTimeout(() => {
+          preloader.classList.add("loaded");
+        }, 500); // 0.5 saniye - daha hızlı
       });
     </script>
   </body>
