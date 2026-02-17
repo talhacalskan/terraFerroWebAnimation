@@ -11,7 +11,7 @@
       href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;500;700&family=Inter:wght@300;400;600&display=swap"
       rel="stylesheet"
     />
-
+    /// Tailwind CDN with custom configuration
     <script src="https://cdn.tailwindcss.com"></script>
     <script>
       tailwind.config = {
@@ -100,6 +100,8 @@
         z-index: 10000;
         will-change: transform;
         mix-blend-mode: difference;
+        transform-origin: center center;
+        box-sizing: border-box;
       }
       #cursor-follower {
         position: fixed;
@@ -111,6 +113,8 @@
         z-index: 9999;
         will-change: transform;
         transition: border-color 0.3s ease;
+        transform-origin: center center;
+        box-sizing: border-box;
       }
 
       /* Glass Panel */
@@ -1056,12 +1060,14 @@
             mouseY = e.clientY;
           });
           function updateCursor() {
-            cursorX = mouseX;
-            cursorY = mouseY;
-            followerX += (mouseX - followerX) * 0.15;
-            followerY += (mouseY - followerY) * 0.15;
-            cursor.style.transform = `translate(${cursorX}px, ${cursorY}px)`;
-            follower.style.transform = `translate(${followerX - 17}px, ${followerY - 17}px)`;
+            cursorX = mouseX - 5;
+            cursorY = mouseY - 5;
+            followerX += (mouseX - followerX) * 0.2;
+            followerY += (mouseY - followerY) * 0.2;
+            cursor.style.left = cursorX + "px";
+            cursor.style.top = cursorY + "px";
+            follower.style.left = followerX - 17.5 + "px";
+            follower.style.top = followerY - 17.5 + "px";
             requestAnimationFrame(updateCursor);
           }
           updateCursor();
