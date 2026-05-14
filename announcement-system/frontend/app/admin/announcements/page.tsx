@@ -97,6 +97,14 @@ export default function AdminAnnouncementsPage() {
     }, 0);
   }
 
+  function handleStatusChange(id: string, isActive: boolean) {
+    setItems((prev) =>
+      prev.map((item) =>
+        item.id === id ? { ...item, is_active: isActive } : item,
+      ),
+    );
+  }
+
   return (
     <main className="min-h-screen bg-[#070707] text-white">
       <AnnouncementCMS
@@ -132,6 +140,7 @@ export default function AdminAnnouncementsPage() {
             items={items}
             onEdit={handleEdit}
             onDelete={handleDelete}
+            onStatusChange={handleStatusChange}
           />
         ) : null}
       </section>

@@ -1,7 +1,7 @@
 "use client";
 
 import { useRef, useState } from "react";
-import { CloudUpload, ImagePlus, Video } from "lucide-react";
+import { CloudUpload, ImagePlus, Video, Trash2 } from "lucide-react";
 
 import {
   completeMultipartUpload,
@@ -27,81 +27,100 @@ export function MediaUploader({ media, onChange }: Props) {
   const inputRef = useRef<HTMLInputElement | null>(null);
   const [dragging, setDragging] = useState(false);
   const [uploadError, setUploadError] = useState<string | null>(null);
+  const [isUploading, setIsUploading] = useState(false);
 
   async function uploadFiles(files: FileList | File[]) {
     const nextMedia = [...media];
     setUploadError(null);
+    setIsUploading(true);
 
     try {
       for (const file of Array.from(files)) {
-        const session = await getPresignedUpload({
-          filename: file.name,
-          content_type: file.type,
-          size: file.size,
-        });
+        // Validate file size
+        const maxSize = 500 * 1024 * 1024; // 500MB
+        if (file.size > maxSize) {
+          throw new Error(
+            `Dosya çok büyük: ${(file.size / 1024 / 1024).toFixed(2)}MB (Max: 500MB)`,
+          );
+        }
 
-        if (session.mode === "single") {
-          const uploadResponse = await fetch(session.uploadUrl, {
-            method: "PUT",
-            headers: { "Content-Type": file.type },
-            body: file,
-          });
-
-          if (!uploadResponse.ok) {
-            throw new Error(
-              `R2 upload failed: ${uploadResponse.status} ${uploadResponse.statusText}`,
-            );
-          }
-
-          nextMedia.push({
-            url: session.publicUrl,
-            type: file.type.startsWith("video/") ? "video" : "image",
-            mimeType: file.type,
+        try {
+          const session = await getPresignedUpload({
             filename: file.name,
+            content_type: file.type,
+            size: file.size,
           });
-        } else {
-          const partSize = 10 * 1024 * 1024;
-          const parts: Array<{ ETag: string; PartNumber: number }> = [];
-          let partNumber = 1;
 
-          for (let offset = 0; offset < file.size; offset += partSize) {
-            const chunk = file.slice(offset, offset + partSize);
-            const { url } = await getMultipartPartUrl({
-              key: session.key,
-              uploadId: session.uploadId,
-              part_number: partNumber,
-            });
-
-            const response = await fetch(url, {
+          if (session.mode === "single") {
+            const uploadResponse = await fetch(session.uploadUrl, {
               method: "PUT",
-              body: chunk,
+              headers: { "Content-Type": file.type },
+              body: file,
             });
 
-            if (!response.ok) {
+            if (!uploadResponse.ok) {
               throw new Error(
-                `Multipart upload failed at part ${partNumber}: ${response.status}`,
+                `R2 upload başarısız: ${uploadResponse.status} ${uploadResponse.statusText}`,
               );
             }
 
-            parts.push({
-              ETag: response.headers.get("etag") || `part-${partNumber}`,
-              PartNumber: partNumber,
+            nextMedia.push({
+              url: session.publicUrl,
+              type: file.type.startsWith("video/") ? "video" : "image",
+              mimeType: file.type,
+              filename: file.name,
             });
-            partNumber += 1;
+          } else {
+            const partSize = 10 * 1024 * 1024;
+            const parts: Array<{ ETag: string; PartNumber: number }> = [];
+            let partNumber = 1;
+
+            for (let offset = 0; offset < file.size; offset += partSize) {
+              const chunk = file.slice(offset, offset + partSize);
+              const { url } = await getMultipartPartUrl({
+                key: session.key,
+                uploadId: session.uploadId,
+                part_number: partNumber,
+              });
+
+              const response = await fetch(url, {
+                method: "PUT",
+                body: chunk,
+              });
+
+              if (!response.ok) {
+                throw new Error(
+                  `Multipart upload başarısız: Parça ${partNumber}: ${response.status}`,
+                );
+              }
+
+              parts.push({
+                ETag: response.headers.get("etag") || `part-${partNumber}`,
+                PartNumber: partNumber,
+              });
+              partNumber += 1;
+            }
+
+            await completeMultipartUpload({
+              key: session.key,
+              uploadId: session.uploadId,
+              parts,
+            });
+
+            nextMedia.push({
+              url: session.publicUrl,
+              type: file.type.startsWith("video/") ? "video" : "image",
+              mimeType: file.type,
+              filename: file.name,
+            });
           }
-
-          await completeMultipartUpload({
-            key: session.key,
-            uploadId: session.uploadId,
-            parts,
-          });
-
-          nextMedia.push({
-            url: session.publicUrl,
-            type: file.type.startsWith("video/") ? "video" : "image",
-            mimeType: file.type,
-            filename: file.name,
-          });
+        } catch (fileError) {
+          const errorMsg =
+            fileError instanceof Error
+              ? fileError.message
+              : `${file.name} yüklenemedi`;
+          console.error(`Upload error for ${file.name}:`, fileError);
+          throw new Error(errorMsg);
         }
       }
 
@@ -110,6 +129,8 @@ export function MediaUploader({ media, onChange }: Props) {
       const errorMsg = err instanceof Error ? err.message : "Medya yüklenemedi";
       setUploadError(errorMsg);
       console.error("Upload error:", err);
+    } finally {
+      setIsUploading(false);
     }
   }
 
@@ -152,19 +173,24 @@ export function MediaUploader({ media, onChange }: Props) {
 
       <button
         type="button"
+        disabled={isUploading}
         onClick={() => inputRef.current?.click()}
-        className="flex w-full flex-col items-center justify-center gap-3 rounded-2xl border border-white/10 bg-white/5 px-4 py-8 text-center transition hover:bg-white/10"
+        className="flex w-full flex-col items-center justify-center gap-3 rounded-2xl border border-white/10 bg-white/5 px-4 py-8 text-center transition hover:bg-white/10 disabled:opacity-60 disabled:cursor-not-allowed"
       >
-        <CloudUpload className="h-7 w-7 text-cyan-300" />
+        <CloudUpload
+          className={`h-7 w-7 text-cyan-300 ${isUploading ? "animate-pulse" : ""}`}
+        />
         <div>
           <p className="text-sm font-medium text-white/80">
-            Fotoğraf veya video yükle
+            {isUploading ? "Yükleniyor..." : "Fotoğraf veya video yükle"}
           </p>
-          <p className="mt-1 text-xs text-white/45">Sürükle-bırak veya tıkla</p>
+          <p className="mt-1 text-xs text-white/45">
+            {isUploading ? "Lütfen bekleyin..." : "Sürükle-bırak veya tıkla"}
+          </p>
         </div>
         <div className="mt-1 flex items-center gap-4 text-xs text-white/45">
           <span className="inline-flex items-center gap-2">
-            <ImagePlus className="h-4 w-4" /> Image
+            <ImagePlus className="h-4 w-4" /> Resim
           </span>
           <span className="inline-flex items-center gap-2">
             <Video className="h-4 w-4" /> Video

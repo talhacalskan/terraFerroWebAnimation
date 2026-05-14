@@ -2,7 +2,7 @@
 
 import { useMemo, useState, useEffect } from "react";
 import { motion } from "framer-motion";
-import { Plus, Save, Upload, X } from "lucide-react";
+import { Plus, Save, Upload, X, Trash2 } from "lucide-react";
 
 import { MediaUploader, MediaDraft } from "./media-uploader";
 import { RichEditor } from "./rich-editor";
@@ -213,8 +213,13 @@ export function AnnouncementCMS({
 
       <div className="space-y-5">
         <div className="rounded-[28px] border border-white/10 bg-white/5 p-5 backdrop-blur-xl">
-          <p className="mb-4 text-sm font-medium text-white/70">
-            Medya Önizleme
+          <p className="mb-4 flex items-center justify-between text-sm font-medium text-white/70">
+            <span>Medya Önizleme</span>
+            {media.length > 0 && (
+              <span className="text-xs text-white/45">
+                {media.length} medya
+              </span>
+            )}
           </p>
           <div className="grid gap-3">
             {media.length === 0 ? (
@@ -222,10 +227,10 @@ export function AnnouncementCMS({
                 Fotoğraf veya video eklenmedi.
               </div>
             ) : (
-              media.map((item) => (
+              media.map((item, index) => (
                 <div
-                  key={item.url}
-                  className="overflow-hidden rounded-2xl border border-white/10 bg-black/20"
+                  key={`${item.url}-${index}`}
+                  className="group relative overflow-hidden rounded-2xl border border-white/10 bg-black/20"
                 >
                   {item.type === "image" ? (
                     <img
@@ -240,6 +245,21 @@ export function AnnouncementCMS({
                       className="h-44 w-full object-cover"
                     />
                   )}
+                  <div className="absolute inset-0 flex items-center justify-center bg-black/0 transition group-hover:bg-black/60">
+                    <button
+                      type="button"
+                      onClick={() => {
+                        setMedia((prev) => prev.filter((_, i) => i !== index));
+                      }}
+                      className="opacity-0 transition group-hover:opacity-100 rounded-full bg-red-500 px-3 py-2 text-sm text-white inline-flex items-center gap-2 hover:bg-red-600"
+                    >
+                      <Trash2 className="h-4 w-4" />
+                      Sil
+                    </button>
+                  </div>
+                  <div className="absolute top-2 right-2 rounded-full bg-black/60 px-2.5 py-1 text-xs text-white/80 backdrop-blur-md">
+                    {item.type === "image" ? "Resim" : "Video"}
+                  </div>
                 </div>
               ))
             )}

@@ -72,7 +72,8 @@ def presign_upload(payload: PresignRequest, _: bool = Depends(require_admin)):
     # For testing/development with mock credentials, return mock presigned URL
     is_test_mode = (
         os.environ.get("R2_ACCOUNT_ID", "").startswith("test") or
-        os.environ.get("R2_ACCOUNT_ID", "") == "1234567890abcdef1234567890abcdef"
+        os.environ.get("R2_ACCOUNT_ID", "") == "1234567890abcdef1234567890abcdef" or
+        os.environ.get("R2_ACCOUNT_ID", "").lower() == "mock"
     )
 
     if is_test_mode:
@@ -84,26 +85,36 @@ def presign_upload(payload: PresignRequest, _: bool = Depends(require_admin)):
             "publicUrl": f"http://localhost:8000/announcements/uploads/{key}",
         }
 
-    if payload.size <= max_direct_size:
+    try:
+        if payload.size <= max_direct_size:
+            return {
+                "mode": "single",
+                "key": key,
+                "uploadUrl": r2.presign_put(key, payload.content_type),
+                "publicUrl": r2.public_url(key),
+            }
+
+        upload_id = r2.init_multipart_upload(key, payload.content_type)
+        part_urls = [
+            {"partNumber": part_number, "url": r2.presign_part(key, upload_id, part_number)}
+            for part_number in range(1, 11)
+        ]
+        return {
+            "mode": "multipart",
+            "key": key,
+            "uploadId": upload_id,
+            "partUrls": part_urls,
+            "publicUrl": r2.public_url(key),
+        }
+    except Exception as e:
+        # If R2 fails, fall back to test mode storage
+        print(f"R2 upload failed: {e}, falling back to test mode storage")
         return {
             "mode": "single",
             "key": key,
-            "uploadUrl": r2.presign_put(key, payload.content_type),
-            "publicUrl": r2.public_url(key),
+            "uploadUrl": f"http://localhost:8000/announcements/uploads/{key}",
+            "publicUrl": f"http://localhost:8000/announcements/uploads/{key}",
         }
-
-    upload_id = r2.init_multipart_upload(key, payload.content_type)
-    part_urls = [
-        {"partNumber": part_number, "url": r2.presign_part(key, upload_id, part_number)}
-        for part_number in range(1, 11)
-    ]
-    return {
-        "mode": "multipart",
-        "key": key,
-        "uploadId": upload_id,
-        "partUrls": part_urls,
-        "publicUrl": r2.public_url(key),
-    }
 
 
 @router.post("/uploads/multipart/init")

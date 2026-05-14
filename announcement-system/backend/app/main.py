@@ -8,7 +8,9 @@ from app.routers.announcements import router as announcements_router
 import app.models  # Bu satır tabloların algılanması için çok önemli!
 
 settings = get_settings()
-
+#.\.venv\Scripts\activate 
+#.\venv\Scripts\activate 
+#uvicorn app.main:app --reload --env-file .env
 # 1. Yaşam Döngüsü (Lifespan) Yönetimi - Yeni ve Modern Yöntem
 @asynccontextmanager
 async def lifespan(app: FastAPI):

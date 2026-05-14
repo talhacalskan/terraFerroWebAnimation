@@ -5,11 +5,13 @@ import { AnimatePresence, motion } from "framer-motion";
 import { CalendarDays, ChevronRight, Play, Trash2, Edit2 } from "lucide-react";
 
 import type { AnnouncementRecord } from "../../lib/api";
+import { updateAnnouncement } from "../../lib/api";
 
 type Props = {
   items: AnnouncementRecord[];
   onEdit?: (item: AnnouncementRecord) => void;
   onDelete?: (id: string) => void;
+  onStatusChange?: (id: string, isActive: boolean) => void;
 };
 
 function MediaRenderer({ item }: { item: AnnouncementRecord }) {
@@ -68,8 +70,37 @@ function readPreview(content: string) {
   return plain.length > 180 ? `${plain.slice(0, 180)}...` : plain;
 }
 
-export function AnnouncementFeed({ items, onEdit, onDelete }: Props) {
+export function AnnouncementFeed({
+  items,
+  onEdit,
+  onDelete,
+  onStatusChange,
+}: Props) {
   const [activeId, setActiveId] = useState<string | null>(null);
+  const [togglingId, setTogglingId] = useState<string | null>(null);
+
+  const handleStatusToggle = async (item: AnnouncementRecord) => {
+    setTogglingId(item.id);
+    try {
+      const updated = await updateAnnouncement(item.id, {
+        title: item.title,
+        content: item.content,
+        media_data: item.media_data,
+        is_active: !item.is_active,
+      });
+      onStatusChange?.(item.id, !item.is_active);
+      // Update the item in the list
+      const index = items.findIndex((i) => i.id === item.id);
+      if (index !== -1) {
+        items[index].is_active = !item.is_active;
+      }
+    } catch (err) {
+      console.error("Status toggle failed:", err);
+      alert(err instanceof Error ? err.message : "Durum değiştirilemedi.");
+    } finally {
+      setTogglingId(null);
+    }
+  };
 
   return (
     <>
@@ -88,8 +119,14 @@ export function AnnouncementFeed({ items, onEdit, onDelete }: Props) {
                 <CalendarDays className="h-3.5 w-3.5" />
                 {new Date(item.created_at).toLocaleDateString("tr-TR")}
               </span>
-              <span className="rounded-full border border-white/10 bg-black/20 px-2.5 py-1">
-                Aktif
+              <span
+                className={`rounded-full border px-2.5 py-1 ${
+                  item.is_active
+                    ? "border-emerald-300/30 bg-emerald-500/10 text-emerald-200"
+                    : "border-yellow-300/30 bg-yellow-500/10 text-yellow-200"
+                }`}
+              >
+                {item.is_active ? "Aktif" : "Pasif"}
               </span>
             </div>
 
@@ -110,8 +147,17 @@ export function AnnouncementFeed({ items, onEdit, onDelete }: Props) {
               <ChevronRight className="h-4 w-4" />
             </button>
 
-            {(onEdit || onDelete) && (
+            {(onEdit || onDelete || onStatusChange) && (
               <div className="mt-4 flex gap-2">
+                {onStatusChange && (
+                  <button
+                    onClick={() => handleStatusToggle(item)}
+                    disabled={togglingId === item.id}
+                    className="flex-1 inline-flex items-center justify-center gap-2 rounded-full border border-white/10 bg-amber-500/10 px-4 py-2 text-sm text-amber-300 transition hover:border-amber-400/40 hover:bg-amber-500/20 hover:text-amber-200 disabled:opacity-60 disabled:cursor-not-allowed"
+                  >
+                    {item.is_active ? "Kapat" : "Aç"}
+                  </button>
+                )}
                 {onEdit && (
                   <button
                     onClick={() => onEdit(item)}
