@@ -1,0 +1,32 @@
+# Bağımlılıklar ve Build Çıktıları
+node_modules/
+.next/
+dist/
+build/
+out/
+.vercel
+
+# Python / Backend
+venv/
+.venv/
+env/
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+.Python
+pip-log.txt
+pip-delete-this-directory.txt
+
+# --- KRİTİK: ÇEVRE DEĞİŞKENLERİ ---
+# Hiçbir .env dosyası dışarı sızmamalı
+.env
+.env.local
+.env.development.local
+.env.test.local
+.env.production.local
+*.env* # Editör ve Sistem
+.vscode/
+.idea/
+.DS_Store
+Thumbs.db
