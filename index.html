@@ -1651,7 +1651,8 @@
       // Fetch and render announcements from API
       async function loadAnnouncements() {
         try {
-          const apiBase = "http://localhost:8000";
+          const apiBase =
+            "https://terraferrowebanimation-production.up.railway.app";
           const response = await fetch(`${apiBase}/announcements`, {
             cache: "no-store",
           });
