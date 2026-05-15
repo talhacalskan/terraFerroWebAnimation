@@ -1,3 +1,5 @@
+import { supabase } from "./supabase"; // Supabase bağlantımızı içeri alıyoruz
+
 export const API_BASE =
   process.env.NEXT_PUBLIC_API_BASE_URL ?? "http://localhost:8000";
 
@@ -11,6 +13,17 @@ async function parseError(response: Response, fallback: string) {
     // Ignore parse errors and use fallback message.
   }
   return fallback;
+}
+
+// VIP Kartını (Token) cebimizden çıkaran yardımcı fonksiyon
+async function getAuthHeaders(): Promise<Record<string, string>> {
+  const {
+    data: { session },
+  } = await supabase.auth.getSession();
+  if (session?.access_token) {
+    return { Authorization: `Bearer ${session.access_token}` };
+  }
+  return {}; // Eğer giriş yapılmamışsa boş döner (zaten Next.js koruması içeri almamıştır)
 }
 
 export type AnnouncementRecord = {
@@ -29,6 +42,7 @@ export type AnnouncementRecord = {
   is_active: boolean;
 };
 
+// GET: Buna kilit YOK. Herkes görebilir.
 export async function fetchAnnouncements(options?: {
   activeOnly?: boolean;
 }): Promise<AnnouncementRecord[]> {
@@ -49,6 +63,7 @@ export async function fetchAnnouncements(options?: {
   return response.json();
 }
 
+// POST: Kilit VAR.
 export async function createAnnouncement(payload: {
   title: string;
   content: string;
@@ -57,7 +72,10 @@ export async function createAnnouncement(payload: {
 }) {
   const response = await fetch(`${API_BASE}/announcements`, {
     method: "POST",
-    headers: { "Content-Type": "application/json" },
+    headers: {
+      "Content-Type": "application/json",
+      ...(await getAuthHeaders()), // VIP Kartı zarfa ekleniyor
+    },
     body: JSON.stringify(payload),
   });
 
@@ -68,6 +86,7 @@ export async function createAnnouncement(payload: {
   return response.json();
 }
 
+// PUT: Kilit VAR.
 export async function updateAnnouncement(
   announcementId: string,
   payload: {
@@ -79,7 +98,10 @@ export async function updateAnnouncement(
 ) {
   const response = await fetch(`${API_BASE}/announcements/${announcementId}`, {
     method: "PUT",
-    headers: { "Content-Type": "application/json" },
+    headers: {
+      "Content-Type": "application/json",
+      ...(await getAuthHeaders()), // VIP Kartı zarfa ekleniyor
+    },
     body: JSON.stringify(payload),
   });
 
@@ -90,9 +112,13 @@ export async function updateAnnouncement(
   return response.json();
 }
 
+// DELETE: Kilit VAR.
 export async function deleteAnnouncement(announcementId: string) {
   const response = await fetch(`${API_BASE}/announcements/${announcementId}`, {
     method: "DELETE",
+    headers: {
+      ...(await getAuthHeaders()), // VIP Kartı zarfa ekleniyor
+    },
   });
 
   if (!response.ok) {
@@ -102,6 +128,7 @@ export async function deleteAnnouncement(announcementId: string) {
   return response.json();
 }
 
+// R2 UPLOAD İŞLEMLERİ (Aşağıdakilerin hepsinde Kilit VAR)
 export async function getPresignedUpload(payload: {
   filename: string;
   content_type: string;
@@ -109,7 +136,10 @@ export async function getPresignedUpload(payload: {
 }) {
   const response = await fetch(`${API_BASE}/announcements/uploads/presign`, {
     method: "POST",
-    headers: { "Content-Type": "application/json" },
+    headers: {
+      "Content-Type": "application/json",
+      ...(await getAuthHeaders()),
+    },
     body: JSON.stringify(payload),
   });
 
@@ -142,7 +172,12 @@ export async function getMultipartPartUrl(payload: {
         part_number: String(payload.part_number),
       },
     ).toString()}`,
-    { method: "POST" },
+    {
+      method: "POST",
+      headers: {
+        ...(await getAuthHeaders()),
+      },
+    },
   );
 
   if (!response.ok) {
@@ -161,7 +196,10 @@ export async function completeMultipartUpload(payload: {
     `${API_BASE}/announcements/uploads/multipart/complete`,
     {
       method: "POST",
-      headers: { "Content-Type": "application/json" },
+      headers: {
+        "Content-Type": "application/json",
+        ...(await getAuthHeaders()),
+      },
       body: JSON.stringify({
         key: payload.key,
         upload_id: payload.uploadId,
