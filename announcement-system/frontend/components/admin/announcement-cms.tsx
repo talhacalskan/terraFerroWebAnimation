@@ -45,7 +45,7 @@ export function AnnouncementCMS({
         editingItem.media_data.map((m) => ({
           url: m.url,
           type: m.type,
-          mimeType: m.mime_type,
+          mimeType: m.mime_type ?? "",
           posterUrl: m.poster_url,
           thumbUrl: m.thumb_url,
           filename: m.filename,
