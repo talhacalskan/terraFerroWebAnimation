@@ -1652,13 +1652,18 @@
             return;
           }
 
-          const announcements = await response.json();
-          const track = document.getElementById("announcements-track");
+         const announcements = await response.json();
+         const track = document.getElementById("announcements-track");
 
-          if (!track) return;
+if (!track) {
+    console.error("HATA: 'announcements-track' ID'li element bulunamadı!");
+    return;
+}
 
-          // Clear existing content
-          track.innerHTML = "";
+if (announcements.length === 0) {
+    track.innerHTML = "<div class='p-10 text-center opacity-50'>Şu an aktif bir duyuru bulunmamaktadır.</div>";
+    return;
+}
 
           // Render each announcement
           announcements.forEach((ann, index) => {
