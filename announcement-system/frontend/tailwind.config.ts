@@ -2,22 +2,23 @@ import type { Config } from "tailwindcss";
 
 const config: Config = {
   content: [
-    "./app/**/*.{ts,tsx}",
-    "./components/**/*.{ts,tsx}",
-    "./lib/**/*.{ts,tsx}",
+    "./pages/**/*.{js,ts,jsx,tsx,mdx}",
+    "./components/**/*.{js,ts,jsx,tsx,mdx}",
+    "./app/**/*.{js,ts,jsx,tsx,mdx}",
   ],
   theme: {
     extend: {
       colors: {
-        obsidian: "#070707",
-        accent: "#22d3ee",
+        accent: "#1f4d1f",
+        itCyan: "#1f4d1f",
+        obsidian: "#ffffff",
       },
-      boxShadow: {
-        glass: "0 24px 120px rgba(0, 0, 0, 0.35)",
+      fontFamily: {
+        space: ["'Space Grotesk'", "sans-serif"],
+        inter: ["'Inter'", "sans-serif"],
       },
     },
   },
   plugins: [],
 };
-
 export default config;
