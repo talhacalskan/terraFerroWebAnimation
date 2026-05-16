@@ -1,7 +1,9 @@
 import { supabase } from "./supabase"; // Supabase bağlantımızı içeri alıyoruz
 
+// İŞTE DEĞİŞİKLİK BURADA: localhost yerine Railway canlı sunucun eklendi
 export const API_BASE =
-  process.env.NEXT_PUBLIC_API_BASE_URL ?? "http://localhost:8000";
+  process.env.NEXT_PUBLIC_API_BASE_URL ??
+  "https://terraferrowebanimation-production.up.railway.app";
 
 async function parseError(response: Response, fallback: string) {
   try {
