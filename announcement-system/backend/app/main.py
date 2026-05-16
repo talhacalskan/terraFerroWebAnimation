@@ -31,23 +31,12 @@ app = FastAPI(
 )
 
 # 3. Güvenlik (CORS) Ayarları
-cors_origins = [
-    "https://terraferrotech.com",
-    "https://www.terraferrotech.com",
-    "http://localhost:3000",
-    "http://127.0.0.1:3000",
-    "http://localhost:5173",
-    "http://127.0.0.1:5173",
-    "http://localhost:5500",
-    "http://127.0.0.1:5500",
-    "http://localhost:5501",
-    "http://127.0.0.1:5501",
-]
-
+# Tüm originlere izin ver - public GET endpoint zaten herkese açık,
+# admin endpointleri JWT ile korunuyor
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=cors_origins,
-    allow_credentials=True,
+    allow_origins=["*"],
+    allow_credentials=False,
     allow_methods=["*"],
     allow_headers=["*"],
 )
