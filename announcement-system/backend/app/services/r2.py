@@ -4,16 +4,19 @@ import uuid
 import boto3
 
 
+from app.core.config import get_settings
+
 class R2Service:
     def __init__(self) -> None:
-        self.account_id = os.environ["R2_ACCOUNT_ID"]
-        self.bucket = os.environ["R2_BUCKET"]
-        self.public_base_url = os.environ["R2_PUBLIC_BASE_URL"].rstrip("/")
+        settings = get_settings()
+        self.account_id = settings.R2_ACCOUNT_ID
+        self.bucket = settings.R2_BUCKET
+        self.public_base_url = settings.R2_PUBLIC_BASE_URL.rstrip("/")
         self.client = boto3.client(
             "s3",
             endpoint_url=f"https://{self.account_id}.r2.cloudflarestorage.com",
-            aws_access_key_id=os.environ["R2_ACCESS_KEY_ID"],
-            aws_secret_access_key=os.environ["R2_SECRET_ACCESS_KEY"],
+            aws_access_key_id=settings.R2_ACCESS_KEY_ID,
+            aws_secret_access_key=settings.R2_SECRET_ACCESS_KEY,
             region_name="auto",
         )
 
